@@ -1,6 +1,6 @@
 {
-  "version": "0.1.4",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.1.4/MhJido-0.1.4.zip",
-  "sha256": "2d6b4a79e214ddcb0646aa2ea25f696276fc2adbc921ff7a810b7ed7a07216a8",
-  "notes": "- 更新应用图标"
+  "version": "0.1.5",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.1.5/MhJido-0.1.5.zip",
+  "sha256": "a1f5991f36c0fb61cc87260b202ee7576b7bad681bc51fb6173f543e8baee4d5",
+  "notes": "- 更新应用图标为新版 MH ∞ logo\n- 控制台界面顶部新增品牌标识(∞ + MH)"
 }
