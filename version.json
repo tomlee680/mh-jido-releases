@@ -1,6 +1,6 @@
 {
-  "version": "0.1.5",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.1.5/MhJido-0.1.5.zip",
-  "sha256": "a1f5991f36c0fb61cc87260b202ee7576b7bad681bc51fb6173f543e8baee4d5",
-  "notes": "- 更新应用图标为新版 MH ∞ logo\n- 控制台界面顶部新增品牌标识(∞ + MH)"
+  "version": "0.2.0",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.2.0/JidoMH-0.2.0.zip",
+  "sha256": "c9df63b90ebce907f688fe8c8331258c42e319456fb6fb4d7d0c68ff4d69a77d",
+  "notes": "- 全面迁移到 Windows 原生运行(自动化不再在 Mac 上跑;Mac 仅用于开发)\n- 窗口截图/定位/激活改用 pywin32(PrintWindow + GetWindowRect + SetForegroundWindow)\n- OCR 改用 RapidOCR(ONNX,自带中文模型、离线),取代苹果 Vision 框架\n- 鼠标/键盘改用 pynput;移除原 Mac 兼容层的双光标漂移补偿(伺服/悬停/标定)\n- 打包改为 PyInstaller Windows onedir,更新走「等退出→换目录」.bat 自替换\n- 新增 GitHub Actions:推 vX.Y.Z tag 自动在云端编译 exe 并发布,程序内一键自动更新"
 }
