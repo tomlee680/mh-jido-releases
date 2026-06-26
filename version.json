@@ -1,6 +1,6 @@
 {
-  "version": "0.2.2",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.2.2/JidoMH-0.2.2.zip",
-  "sha256": "63996ca544de3627edf788b066dae6853d9ede65a35948a0215f872bd9c6641d",
-  "notes": "- 版本维护更新"
+  "version": "0.2.3",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.2.3/JidoMH-0.2.3.zip",
+  "sha256": "927d4b98e166742334f36e2e99c2d515f132a1aae20ddd2ca68d542f305382ee",
+  "notes": "- 打开任务窗的快捷键从 Cmd+Q 改为 Alt+Q(配合全面切到 Windows,梦幻用 Alt+Q)\n- 「停止」改为秒级响应:把停止事件贯穿到执行层,WAIT 等待与思考停顿都可被打断,点一次即停,不必再连按多次\n- 取消启动时的自动检查更新(GitHub 在国内常超时,开软件不再报错);更新检查改为只点「检查更新」按钮才触发"
 }
