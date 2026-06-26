@@ -1,6 +1,6 @@
 {
-  "version": "0.2.1",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.2.1/JidoMH-0.2.1.zip",
-  "sha256": "43f6111daa9d8240641fe6a900d3208c10669b211e6f267b3de6f6c19cf6a83c",
-  "notes": "- 师门点击改为闭环验证:点完红链接后先确认任务窗已关(即点中)再进入导航;未关窗会在超时内自动重试,重试用尽退回重新识别——减少\"点空即卡死\"\n- 窗口 OCR 大幅提速:静止帧用帧差跳过、不重复识别;并只对任务面板区域(ROI)做 OCR,读不到则自动全窗口兜底\n- 感知层契约清理:新增 window_open 事实字段,confidence 只表示识别清晰度(为后续异常恢复打基础)"
+  "version": "0.2.2",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.2.2/JidoMH-0.2.2.zip",
+  "sha256": "63996ca544de3627edf788b066dae6853d9ede65a35948a0215f872bd9c6641d",
+  "notes": "- 版本维护更新"
 }
