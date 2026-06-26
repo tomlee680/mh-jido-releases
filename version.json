@@ -1,6 +1,6 @@
 {
-  "version": "0.3.9",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.9/JidoMH-0.3.9.zip",
-  "sha256": "c828bab38e887fa432c9a7b8cd31294ad49adfaf7b1327501f5e2e7567d99f13",
-  "notes": "- 找师傅正式从 OCR 切到「灰度模板匹配」:不再认字、改认师傅名那块图。灰度=不锁颜色,名字是白/蓝/黄都能匹配;`TM_CCOEFF_NORMED` 对整体明暗变化也鲁棒。彻底告别 OCR 那条「只盯任务面板 ROI、看不到中央地图、字小读花」的老路\n- 模板走「预置库」:师傅名/锚点图随安装包发(`game_config/templates/<类别>/<槽>__<目标>.png`),用户开箱即用、零标注。识别按登记表(`perception/templates.py`)取图;命中阈值 0.8(实测可调)\n- 开始前置校验:预置库里没有该师傅的名字模板时拦下并提示「暂不支持该师傅」(用户不再需要、也不能自己采集)\n- 新增开发者「标注台」(独立 `labeling/` 包,**正式发布构建用 `--exclude-module` 整块排除**,用户 exe 里没有这块代码、无从反编译):选本地仓库目录 → 按登记表查每个师傅缺哪些图 → 采集/重新标注(同名覆盖)→ 一键提交并推送,直接更新预置库\n- 性能:只有「找师傅/验证点击」相位才跑模板匹配,其余相位(回师门/等待/切图)只按键不识别,省 CPU(慢机器更明显);找师傅热路径不再加载/调用 OCR\n- 新增单测:灰度匹配(命中定位、region 约束返回绝对坐标、亮度变化仍命中、无图案不误报)、模板登记表(查缺/解析/已标扫描)"
+  "version": "0.3.10",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.10/JidoMH-0.3.10.zip",
+  "sha256": "278ac1f7f20674dd5bdeaea7cf31b5fb636a8fb0eb094dffa36d6ebcd720abcd",
+  "notes": "- 打包脚本默认把开发者「标注台」(`labeling/` 包)打进包:此前 `build_release.py` 写死 `--exclude-module labeling`,导致 v0.3.9 等已发布版本里没有标注台按钮、无法在 Windows 上采集模板。现改为可切换——默认带上标注台(标注阶段),标注完成后设 `EXCLUDE_LABELING=1` 再构建即可出「干净用户包」\n- 本版为「标注阶段」构建:启动后左侧「调试视图」下方会出现「标注台(开发者)」按钮 → 选仓库目录 → 采集/重标模板 → 一键提交推送"
 }
