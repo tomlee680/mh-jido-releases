@@ -1,6 +1,6 @@
 {
-  "version": "0.2.4",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.2.4/JidoMH-0.2.4.zip",
-  "sha256": "8cc2abbc85c97b15d1e90efb8eb2ff8469557d424056c6fae6c7da897733d5f4",
-  "notes": "- 修复检查更新报「SSL certificate verify failed / unable to get local issuer certificate」:用 truststore 让 TLS 复用 Windows 系统证书库(不会过期、自动处理中间证书)"
+  "version": "0.3.0",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.0/JidoMH-0.3.0.zip",
+  "sha256": "8b4275798bafd30ca6c08ed51f27cbc7d9f81da18950b354b1585018f68ae92a",
+  "notes": "- 师门任务起手式改版:由「Alt+Q 开任务窗找红链接」改为「回师门法术 + 地图找师傅」——按回师门快捷键 → 等 1~2 秒(波动)→ 按 Tab 开地图 → 找师傅名点击寻路\n- 界面新增「回师门快捷键」下拉(F1~F8,必选,未选不让开始)和「师傅名称」输入框(各门派师傅不同,自己填,如 东海龙王)\n- 设置记忆:回师门快捷键 / 师傅名 / 完成数会被记住,下次打开自动回填(QSettings)\n- 找不到 / 点不中师傅时自动兜底:重看 → 重开地图 → 退回重新回师门,点击成段有界、不暴点死循环\n- 本版到「点中师傅、自动寻路」为止,到达后的对话 / 战斗为后续接续点"
 }
