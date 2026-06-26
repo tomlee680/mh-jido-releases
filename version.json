@@ -1,6 +1,6 @@
 {
-  "version": "0.3.11",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.11/JidoMH-0.3.11.zip",
-  "sha256": "ec27cb8ffbc32cdaa26350d1199911ac100c91987bc7df6c0374a2c9d706bb03",
-  "notes": "- 修复标注台采集中文师傅名时文件名存成乱码:`cv2.imwrite` 在 Windows 上不支持非 ASCII 路径,会把「东海龙王」等中文名写坏,导致识别层按正确名找图找不到、采了等于白采。改用 `cv2.imencode` 编码 + Python `open()` 写盘,完整支持 Unicode 路径\n- 标注台一键提交的默认 commit 说明改为英文 ASCII,绕开 Windows 控制台编码导致的提交说明乱码"
+  "version": "0.3.12",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.12/JidoMH-0.3.12.zip",
+  "sha256": "14637570abf33a3b10dad277f57182582df0c7122138b2888ae3c1a1e4364c91",
+  "notes": "- 主页面「实时日志」新增「复制」按钮:一键把全部日志复制到剪贴板,不用再手动选中\n- 主页面每次点「开始」(校验通过后)自动清空上一轮日志,本轮日志保持干净(校验报错提示在清空前返回,不受影响)\n- 标注台「日志」新增标题栏 +「复制」「清空」两个按钮。标注台是连续操作,日志默认不自动清(它是这次采了哪些图、推送成没成的记录),要清由你手动点"
 }
