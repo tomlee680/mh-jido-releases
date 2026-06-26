@@ -1,6 +1,6 @@
 {
-  "version": "0.3.4",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.4/JidoMH-0.3.4.zip",
-  "sha256": "2c990464a59da4ce820b21a4ae5756400e4b7973579d9147b6e64551715d5f00",
-  "notes": "- 修复自动更新「sha256 不匹配」:更新器读 version.json 时没防缓存,raw.githubusercontent 的 CDN 会返回旧的 manifest(其 sha 与最新 zip 对不上),下载后校验就失败。现在每次读 manifest 都带时间戳 cache-buster + no-cache 头,永远读到 main 上最新的版本信息\n- 本版同时包含 0.3.3 的师门修复(只认地图黄色师傅标签、不再误点右上角半透明面板;Tab 开关键闭环纠偏;落点诊断修正)——若你之前没更到 0.3.3,这版会一并带上"
+  "version": "0.3.5",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.5/JidoMH-0.3.5.zip",
+  "sha256": "b4661b09c6e491d797f3a296830d445992c89f331c675363b819474ab62e6ed7",
+  "notes": "- 更新完成后自动打开新版本:更新脚本覆盖完文件会自动重启新版(本就有此设计),并带 --from-update 标记,确保新版即使紧接着旧进程也能可靠弹出、不被单实例锁误拦\n- 只允许开一个窗口:已经开着时再双击图标,不再开新窗口,而是把已经在跑的那个窗口拉到最前(激活置顶)。用 Qt 原生本地套接字实现,进程退出自动释放,不影响更新时的自动重启\n- 名字统一成英文:更新窗口的标题/提示由「妙慧自动」改为「jido mh」,和主窗口一致(磁盘文件名 JidoMH 不变)"
 }
