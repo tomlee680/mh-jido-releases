@@ -1,6 +1,6 @@
 {
-  "version": "0.3.8",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.8/JidoMH-0.3.8.zip",
-  "sha256": "e87b7faa9f0b482c3c4e9b1d706e1fec532fe2bb5ab3578e9c725bf67d88d71c",
-  "notes": "- 新增模板匹配探针 `tools/template_probe.py`(联调工具,不进正式主循环):用于验证「定位 Tab 框 → 框内模板匹配师傅名字图」能否稳定替代 OCR 找师傅。两步用法——`capture` 采集名字/锚点模板,`match` 出命中叠加图与分数,反复跑看稳不稳\n- 说明:本版**未改动**正式「找师傅」逻辑(仍走 OCR),仅为下一步从 OCR 切到模板匹配做验证准备"
+  "version": "0.3.9",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.9/JidoMH-0.3.9.zip",
+  "sha256": "c828bab38e887fa432c9a7b8cd31294ad49adfaf7b1327501f5e2e7567d99f13",
+  "notes": "- 找师傅正式从 OCR 切到「灰度模板匹配」:不再认字、改认师傅名那块图。灰度=不锁颜色,名字是白/蓝/黄都能匹配;`TM_CCOEFF_NORMED` 对整体明暗变化也鲁棒。彻底告别 OCR 那条「只盯任务面板 ROI、看不到中央地图、字小读花」的老路\n- 模板走「预置库」:师傅名/锚点图随安装包发(`game_config/templates/<类别>/<槽>__<目标>.png`),用户开箱即用、零标注。识别按登记表(`perception/templates.py`)取图;命中阈值 0.8(实测可调)\n- 开始前置校验:预置库里没有该师傅的名字模板时拦下并提示「暂不支持该师傅」(用户不再需要、也不能自己采集)\n- 新增开发者「标注台」(独立 `labeling/` 包,**正式发布构建用 `--exclude-module` 整块排除**,用户 exe 里没有这块代码、无从反编译):选本地仓库目录 → 按登记表查每个师傅缺哪些图 → 采集/重新标注(同名覆盖)→ 一键提交并推送,直接更新预置库\n- 性能:只有「找师傅/验证点击」相位才跑模板匹配,其余相位(回师门/等待/切图)只按键不识别,省 CPU(慢机器更明显);找师傅热路径不再加载/调用 OCR\n- 新增单测:灰度匹配(命中定位、region 约束返回绝对坐标、亮度变化仍命中、无图案不误报)、模板登记表(查缺/解析/已标扫描)"
 }
