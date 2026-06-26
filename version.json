@@ -1,6 +1,6 @@
 {
-  "version": "0.3.10",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.10/JidoMH-0.3.10.zip",
-  "sha256": "278ac1f7f20674dd5bdeaea7cf31b5fb636a8fb0eb094dffa36d6ebcd720abcd",
-  "notes": "- 打包脚本默认把开发者「标注台」(`labeling/` 包)打进包:此前 `build_release.py` 写死 `--exclude-module labeling`,导致 v0.3.9 等已发布版本里没有标注台按钮、无法在 Windows 上采集模板。现改为可切换——默认带上标注台(标注阶段),标注完成后设 `EXCLUDE_LABELING=1` 再构建即可出「干净用户包」\n- 本版为「标注阶段」构建:启动后左侧「调试视图」下方会出现「标注台(开发者)」按钮 → 选仓库目录 → 采集/重标模板 → 一键提交推送"
+  "version": "0.3.11",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.11/JidoMH-0.3.11.zip",
+  "sha256": "ec27cb8ffbc32cdaa26350d1199911ac100c91987bc7df6c0374a2c9d706bb03",
+  "notes": "- 修复标注台采集中文师傅名时文件名存成乱码:`cv2.imwrite` 在 Windows 上不支持非 ASCII 路径,会把「东海龙王」等中文名写坏,导致识别层按正确名找图找不到、采了等于白采。改用 `cv2.imencode` 编码 + Python `open()` 写盘,完整支持 Unicode 路径\n- 标注台一键提交的默认 commit 说明改为英文 ASCII,绕开 Windows 控制台编码导致的提交说明乱码"
 }
