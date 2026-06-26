@@ -1,6 +1,6 @@
 {
-  "version": "0.3.13",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.13/JidoMH-0.3.13.zip",
-  "sha256": "e489a757d6bbc8a5991ff273fd1e8cd57e8e0d1b5861bdb883302cb8fb4ad136",
-  "notes": "- 标注台「一键提交推送」真正做到一键:推送前自动 `git pull --rebase origin main`,把远程(比如发版)新提交先拉下来再推,不会再因为「远程比本地新」被拒。变基若冲突会自动回滚、不把仓库留在半路\n- 同时:即使没有新模板改动,只要本地有没推上去的提交,也会一并推送(修复「已提交但上次没推成功,再点没反应」)"
+  "version": "0.3.14",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.14/JidoMH-0.3.14.zip",
+  "sha256": "6b47934d9aba01ab71d8e3c0e15f5c7bf93daabc9f05e10495707dc144437e6c",
+  "notes": "- 修复找师傅误报「预置库里没有该师傅的名字模板」:根因是识别层用 `cv2.imread` 读模板,而它在 Windows 上不支持中文/非 ASCII 路径,碰到 `name__东海龙王.png` 会返回 None——文件明明在(开跑前用 `os.path.exists` 校验能过、引擎照常启动),却在加载时静默读不到。改用 Unicode 安全的 `np.fromfile` + `cv2.imdecode`(与 v0.3.11 采集写入端的 `imencode`+`open` 对称),中文师傅名模板现可正常加载\n- 影响:此前所有中文名预置模板(如东海龙王)采集并推送后仍无法被识别,本版修复后即生效;配合开发者标注台的本地仓库 override,采集后无需每次发版即可本地即时测试"
 }
