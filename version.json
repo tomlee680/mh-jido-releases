@@ -1,7 +1,7 @@
 {
-  "version": "0.3.26",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.26/JidoMH-0.3.26.zip",
-  "sha256": "cbabf49bf1fb3d4f9a5660a9cea1881505a84e1a287225074641774bffdae5a8",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.26/files.json",
-  "notes": "- **关闭标定模式,机器人恢复自动点击。** 0.3.25 的诊断模式 + 0.3.24 的标定共同证实:**坐标层是对的**——机器人算出的师傅落点 (620,388) 正落在「东海龙王」名字框正中,与用户亲手点中处仅差 (19,9) 的人为手抖;且用户确认手点该名字确实能前往。即「点偏」已不再是瓶颈,之前的大偏移在客户区锚定(0.3.23)后已消除。本版把 `CALIBRATE` 关回 False,让师门找到师傅后**真正自动点击**、回到测命中率的正轨(不再每次找到师傅就停下让你手点)。需要再量地面真值时改回 True\n- 说明:SendInput 原语(0.3.25)保留——它是对 DirectX 更稳的前台注入,虽非本次命中率的决定因素,留着无害"
+  "version": "0.3.28",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.28/JidoMH-0.3.28.zip",
+  "sha256": "6223257e67783742a3b2e9971042b5a50be7bf6d65e558d8a6bd3349a4943532",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.28/files.json",
+  "notes": "- **自动扫偏移(`AUTO_OFFSET_SWEEP`):让程序自己找出\"该补多少偏移才点得中师傅\"。** 背景:梦幻是 raw input 游戏,绝对定位会让游戏自绘光标落偏一点(关掉 Windows 鼠标加速后已很接近、仍差一丢丢),需要一个补偿偏移。但\"测量偏移\"要看见游戏光标,而世界里有其他玩家、认不准——所以**不测光标**,改用唯一可信的信号:**点中师傅→人物自动寻路→整屏画面大幅滚动**(远超别玩家走动的局部噪声)。开启后,找到师傅名即在其附近按网格(以标定热点 (-19,-9) 为中心、近的先试)逐个点击,先量\"静止基线\"定阈值,再逐偏移点击比较前后两帧;**首个让画面大幅变化的偏移=点中**,打出\"★ 偏移(dx,dy)\"并停机。把该值填进 `controller.MASTER_PROBE_OFFSET`、关回开关即可正常自动刷。全自动、一次跑完、不用肉眼看,且绕开\"测不准游戏光标\"的难题\n- 纠正:旧的闭环判定\"师傅名消失=点中\"是错的——点师傅触发的是自动寻路、名字不是对话框元素、点了不消失。本版用\"画面滚动\"作为正确的点中信号"
 }
