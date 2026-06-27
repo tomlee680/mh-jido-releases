@@ -1,7 +1,7 @@
 {
-  "version": "0.3.20",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.20/JidoMH-0.3.20.zip",
-  "sha256": "04506ff4088aa86a61ae9e7cb4fde33a92878f3a55068314ad63d08e8a7206e9",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.20/files.json",
-  "notes": "- **点中师傅(补偿落点偏移)**:用 v0.3.18 标定模式的实测结果——模板匹配框系统性落在真实文字「东海龙王」右下方约 (32, 23)px(竖直偏移稳定,水平因名字宽而散)——给师傅点击落点加上补偿 `MASTER_CLICK_OFFSET = (-32, -23)`,把落点从模板框中心挪回真实文字上。关闭标定模式(`CALIBRATE=False`),改回正常点击;点补偿后的精确落点、不在偏掉的框内散布\n- 说明:这是基于实测差值的补偿。若后续验证证实是「截图整体偏移」,会改为全局补偿;目前先确保能点中东海龙王"
+  "version": "0.3.21",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.21/JidoMH-0.3.21.zip",
+  "sha256": "489a881ea783e21fbfc8a01dcde635dd267aa5a59262e6ed467ccc069ea9da89",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.21/files.json",
+  "notes": "- **师门找师傅:流程从「Tab 开地图」改为「Alt+Q 开人物工具」。** 地图上师傅名是会浮动的世界标签、点它易偏;人物工具里师傅名是静态菜单文字项,点它更稳。回师门(F8)起手不变,只把开面板的键从 Tab 换成 Alt+Q,后续在人物工具面板里用灰度模板匹配找师傅名并点击。⚠️ 需要在新版本里**重新采集**「东海龙王」模板(从人物工具面板里截),旧的地图版模板在面板里匹配不到\n- **根治「识别准、点击偏」:截图从 PrintWindow 改为 mss 抓真实桌面。** 根因查实:PrintWindow 走 GDI,对 DirectX 游戏(梦幻西游)抓到的帧和屏幕实际显示不一致——所以模板在它那帧里找得准,照算出的坐标点到真屏幕上却偏,而且时好时坏(上版 4/7)。改用 mss 按窗口矩形抓「真实桌面」那一帧后,模板坐标=真实屏幕坐标,点击落位。**PrintWindow 已彻底删除**(不再做兜底);要求游戏窗口前台不被遮挡(正常运行本就如此)\n- **删掉落点补偿** `MASTER_CLICK_OFFSET`:根因修了,不再需要这种打补丁式的固定偏移(它也保证不了每次准);恢复正常的框内正态散布点击\n- **新增「识别存证图」**:命中师傅名时,把红框+中心十字画在当帧(mss 真实截图)上,存到用户主目录 `~/jido_识别存证.png`(日志里打出完整路径)。打开它和屏幕对一眼:红框正压在「东海龙王」上且与屏幕一致 = 截图修对了"
 }
