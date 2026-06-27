@@ -1,7 +1,7 @@
 {
-  "version": "0.3.19",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.19/JidoMH-0.3.19.zip",
-  "sha256": "de5c418c4895ef421e1cdd0d669751b23a25bf4ec97a32dbaddadcad9827ef3b",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.19/files.json",
-  "notes": "- **增量更新(差分下载)**:更新不再每次重下整包。打包时多生成一份 `files.json`——记录每个文件的 sha256 和它在 zip 内的精确字节区段;客户端检查更新时把它和本地已装文件逐一比对,只用 HTTP Range 把「变了的文件」那几段字节从同一个 zip 里抠下来。只改几行代码的版本通常就下个几 MB 的 exe,几秒完成;像 PySide6、OCR 模型这些几十上百 MB 的大库,只要没变就原地不动、不再重复下载\n- **智能补齐,无需切换模式**:判断依据是「本地有没有、内容一不一样」,与「是代码还是库」无关——所以哪天新增了一个库(本地根本没有),它的文件会被自动整批列入下载,一次把缺的补齐;平时则只下变化的那点。同一套机制按差异量自动伸缩,不用手动区分大更新/小更新\n- **稳妥兜底(闭环)**:差分任一环出问题(服务器不支持 Range、清单异常、sha 校验不过、或差异过大超过整包 70%/200 个文件)都会自动退回「下整包」这条久经验证的老路,保证更新永远能装好;每个抠下来的文件都按 sha256 校验,残留的临时目录下次启动统一清理"
+  "version": "0.3.20",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.20/JidoMH-0.3.20.zip",
+  "sha256": "04506ff4088aa86a61ae9e7cb4fde33a92878f3a55068314ad63d08e8a7206e9",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.20/files.json",
+  "notes": "- **点中师傅(补偿落点偏移)**:用 v0.3.18 标定模式的实测结果——模板匹配框系统性落在真实文字「东海龙王」右下方约 (32, 23)px(竖直偏移稳定,水平因名字宽而散)——给师傅点击落点加上补偿 `MASTER_CLICK_OFFSET = (-32, -23)`,把落点从模板框中心挪回真实文字上。关闭标定模式(`CALIBRATE=False`),改回正常点击;点补偿后的精确落点、不在偏掉的框内散布\n- 说明:这是基于实测差值的补偿。若后续验证证实是「截图整体偏移」,会改为全局补偿;目前先确保能点中东海龙王"
 }
