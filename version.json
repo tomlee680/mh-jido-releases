@@ -1,7 +1,7 @@
 {
-  "version": "0.3.23",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.23/JidoMH-0.3.23.zip",
-  "sha256": "08ceb21516548fc2d914e328b91412c1c2b9153585d08532ae0aac2f203411e0",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.23/files.json",
-  "notes": "- **根治「识别准、却点不中」:坐标基准从「窗口矩形」统一改为「客户区」。** 真因不是鼠标飘移、也不是 DPI(已确认 100% 单屏),而是**坐标系错位**——抓帧用窗口矩形(含标题栏/边框)、点击却另算一个原点,差的就是那一圈外壳。改法:抓帧和点击回加原点都用**同一个 `ClientToScreen`** + `GetClientRect`(纯游戏画面 1024×768),从构造上不存在可偏的余地,**不再需要任何偏移补偿**(`MASTER_CLICK_OFFSET` 这类打补丁式做法彻底废弃)。这也是纯视觉自动化社区的标准做法\n- **坐标诊断打全**:`[坐标诊断]` 行同时打印 客户区矩形(`ClientToScreen`+`GetClientRect`)与 窗口矩形(`GetWindowRect`)及两者差值,真机一跑就能看到真实客户区到底是不是 1024×768、之前偏掉的外壳有多大——验证靠观察,不靠猜\n- 识别层(灰度模板匹配师傅名)不变,**无需重新采集模板**"
+  "version": "0.3.24",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.24/JidoMH-0.3.24.zip",
+  "sha256": "7b5544e32b06ff88e9c78ce3b4e74e3e1b4a2c638ec616955c59f6812c759fda",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.24/files.json",
+  "notes": "- **标定模式(测量,不是修复)**:0.3.23 的客户区改动对无边框窗口是空操作、点击仍偏,且所有日志读数都自洽地显示\"对齐\"——说明错位在代码看不见的那一层(截图帧 vs 屏幕真实显示)。本版重开 `CALIBRATE`:找到师傅后**不自动点**,提示用真鼠标点一次「东海龙王」,被动记录你点的屏幕坐标(零注入),打印 `差值(你-模板)`。差值大=截图与屏幕错位(很可能抓帧选错了多开器窗口层),差值≈0=点击其实在字上、问题是该文字不可点(应改点右上角任务追踪)。量清楚即关闭"
 }
