@@ -1,7 +1,7 @@
 {
-  "version": "0.3.22",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.22/JidoMH-0.3.22.zip",
-  "sha256": "397a335374c87923ade8e2afa57769c0aa11a68d7227a8d4fb0a53431a7d837d",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.22/files.json",
-  "notes": "- **根治「旧版 exe 越积越多」:exe 改回固定名 `JidoMH.exe`,不再按版本号改名。** 根因查实(看 `jidomh_update.log`):自更新的 swap.bat 在杀软环境下每次都被掐断,整包更新里 robocopy 的 `*EXTRA File` 列出的旧 exe 在 bat 跑到删除前就被结束;增量更新用 `/E` 不清旧 exe、靠后续 `del` 删——`del` 没跑到 → 旧 `JidoMH-0.3.x.exe` 残留堆积。改成固定名后,更新时 robocopy **原地覆盖同名 exe**,从根上不再产生旧文件。版本号改到程序**标题栏**显示(不再靠文件名看版本)\n- **桌面快捷方式自动维护**:启动时在桌面建一个固定快捷方式 `jido mh.lnk` 指向 `JidoMH.exe`(用系统 PowerShell 处理,正确识别 OneDrive 重定向的桌面),并清掉桌面上指向旧式带版本号 exe 的快捷方式。固定名 + 固定快捷方式 = 永不失效,直接双击即可\n- **迁移清理**:本版启动时会把安装目录里残留的旧式 `JidoMH-<版本>.exe` 一并删除(正在运行的那个除外,下次启动再清)"
+  "version": "0.3.23",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.23/JidoMH-0.3.23.zip",
+  "sha256": "08ceb21516548fc2d914e328b91412c1c2b9153585d08532ae0aac2f203411e0",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.23/files.json",
+  "notes": "- **根治「识别准、却点不中」:坐标基准从「窗口矩形」统一改为「客户区」。** 真因不是鼠标飘移、也不是 DPI(已确认 100% 单屏),而是**坐标系错位**——抓帧用窗口矩形(含标题栏/边框)、点击却另算一个原点,差的就是那一圈外壳。改法:抓帧和点击回加原点都用**同一个 `ClientToScreen`** + `GetClientRect`(纯游戏画面 1024×768),从构造上不存在可偏的余地,**不再需要任何偏移补偿**(`MASTER_CLICK_OFFSET` 这类打补丁式做法彻底废弃)。这也是纯视觉自动化社区的标准做法\n- **坐标诊断打全**:`[坐标诊断]` 行同时打印 客户区矩形(`ClientToScreen`+`GetClientRect`)与 窗口矩形(`GetWindowRect`)及两者差值,真机一跑就能看到真实客户区到底是不是 1024×768、之前偏掉的外壳有多大——验证靠观察,不靠猜\n- 识别层(灰度模板匹配师傅名)不变,**无需重新采集模板**"
 }
