@@ -1,7 +1,7 @@
 {
-  "version": "0.3.25",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.25/JidoMH-0.3.25.zip",
-  "sha256": "7f4bb8a07da0ba13a2a4da6d6864a40803db8101672939ff80385e840de933f4",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.25/files.json",
-  "notes": "- **点击原语从 pynput(SetCursorPos)切到 SendInput。** 客户区锚定后仍点不中、且 OS 光标回读始终自洽——新假设(成因2):梦幻是 DirectX,可能只认 `SendInput` 注入的移动、不认 `SetCursorPos`,于是「OS 光标到位、游戏自绘白光标却没到」。本版把执行层的移动与左键 down/up 全部改走 **SendInput 绝对注入**(按虚拟桌面归一 0..65535),**仍是前台真实点击**,非后台 PostMessage、非驱动。点击的拟人收口/正态落点/唯一按下点都不变。开关 `USE_SENDINPUT`(`execution/controller.py`),改 `False` 一键切回旧 pynput 路径\n- **新增「诊断模式:点击落点测试」**(GUI 复选框):勾上点开始→不跑师门、只移动光标不点击,把 `GetWindowRect / 客户区 / DWM真实边界 / GetDpiForWindow / 虚拟桌面` 报告与逐点偏差打进日志,并对中心/师傅位/左上/右下四点各用 pynput、SendInput 两法抓帧标注存到 `~/jido_点击诊断/`。用来一锤定音区分:成因2(自绘光标解耦)还是成因3(抓错句柄/客户区算错)\n- 识别层不变,**无需重新采集模板**"
+  "version": "0.3.26",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.26/JidoMH-0.3.26.zip",
+  "sha256": "cbabf49bf1fb3d4f9a5660a9cea1881505a84e1a287225074641774bffdae5a8",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.26/files.json",
+  "notes": "- **关闭标定模式,机器人恢复自动点击。** 0.3.25 的诊断模式 + 0.3.24 的标定共同证实:**坐标层是对的**——机器人算出的师傅落点 (620,388) 正落在「东海龙王」名字框正中,与用户亲手点中处仅差 (19,9) 的人为手抖;且用户确认手点该名字确实能前往。即「点偏」已不再是瓶颈,之前的大偏移在客户区锚定(0.3.23)后已消除。本版把 `CALIBRATE` 关回 False,让师门找到师傅后**真正自动点击**、回到测命中率的正轨(不再每次找到师傅就停下让你手点)。需要再量地面真值时改回 True\n- 说明:SendInput 原语(0.3.25)保留——它是对 DirectX 更稳的前台注入,虽非本次命中率的决定因素,留着无害"
 }
