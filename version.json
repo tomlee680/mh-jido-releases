@@ -1,7 +1,7 @@
 {
-  "version": "0.3.21",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.21/JidoMH-0.3.21.zip",
-  "sha256": "489a881ea783e21fbfc8a01dcde635dd267aa5a59262e6ed467ccc069ea9da89",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.21/files.json",
-  "notes": "- **师门找师傅:流程从「Tab 开地图」改为「Alt+Q 开人物工具」。** 地图上师傅名是会浮动的世界标签、点它易偏;人物工具里师傅名是静态菜单文字项,点它更稳。回师门(F8)起手不变,只把开面板的键从 Tab 换成 Alt+Q,后续在人物工具面板里用灰度模板匹配找师傅名并点击。⚠️ 需要在新版本里**重新采集**「东海龙王」模板(从人物工具面板里截),旧的地图版模板在面板里匹配不到\n- **根治「识别准、点击偏」:截图从 PrintWindow 改为 mss 抓真实桌面。** 根因查实:PrintWindow 走 GDI,对 DirectX 游戏(梦幻西游)抓到的帧和屏幕实际显示不一致——所以模板在它那帧里找得准,照算出的坐标点到真屏幕上却偏,而且时好时坏(上版 4/7)。改用 mss 按窗口矩形抓「真实桌面」那一帧后,模板坐标=真实屏幕坐标,点击落位。**PrintWindow 已彻底删除**(不再做兜底);要求游戏窗口前台不被遮挡(正常运行本就如此)\n- **删掉落点补偿** `MASTER_CLICK_OFFSET`:根因修了,不再需要这种打补丁式的固定偏移(它也保证不了每次准);恢复正常的框内正态散布点击\n- **新增「识别存证图」**:命中师傅名时,把红框+中心十字画在当帧(mss 真实截图)上,存到用户主目录 `~/jido_识别存证.png`(日志里打出完整路径)。打开它和屏幕对一眼:红框正压在「东海龙王」上且与屏幕一致 = 截图修对了"
+  "version": "0.3.22",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.22/JidoMH-0.3.22.zip",
+  "sha256": "397a335374c87923ade8e2afa57769c0aa11a68d7227a8d4fb0a53431a7d837d",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.22/files.json",
+  "notes": "- **根治「旧版 exe 越积越多」:exe 改回固定名 `JidoMH.exe`,不再按版本号改名。** 根因查实(看 `jidomh_update.log`):自更新的 swap.bat 在杀软环境下每次都被掐断,整包更新里 robocopy 的 `*EXTRA File` 列出的旧 exe 在 bat 跑到删除前就被结束;增量更新用 `/E` 不清旧 exe、靠后续 `del` 删——`del` 没跑到 → 旧 `JidoMH-0.3.x.exe` 残留堆积。改成固定名后,更新时 robocopy **原地覆盖同名 exe**,从根上不再产生旧文件。版本号改到程序**标题栏**显示(不再靠文件名看版本)\n- **桌面快捷方式自动维护**:启动时在桌面建一个固定快捷方式 `jido mh.lnk` 指向 `JidoMH.exe`(用系统 PowerShell 处理,正确识别 OneDrive 重定向的桌面),并清掉桌面上指向旧式带版本号 exe 的快捷方式。固定名 + 固定快捷方式 = 永不失效,直接双击即可\n- **迁移清理**:本版启动时会把安装目录里残留的旧式 `JidoMH-<版本>.exe` 一并删除(正在运行的那个除外,下次启动再清)"
 }
