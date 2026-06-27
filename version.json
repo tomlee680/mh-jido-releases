@@ -1,7 +1,7 @@
 {
-  "version": "0.3.30",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.30/JidoMH-0.3.30.zip",
-  "sha256": "82a0eb4f640d84bf4b7d21a0493b3cbcfe7bd7b2d5ecbc5c0e4ffdbdef5ed67f",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.30/files.json",
-  "notes": "- **修正\"点击生效\"的判定信号:用\"整屏画面滚动\"取代失效的\"师傅名消失\"。** 点师傅触发的是自动寻路、师傅名不是对话框元素、点了不消失——旧的\"名字消失=点中\"判定永远不成立,导致成功点击后仍多余重试。本版感知层每帧算 `scene_diff`(整屏缩略图相对上一帧的平均绝对差),决策层 `verify_click` 改判:`scene_diff ≥ SCENE_WALK_THRESH(13)` 即\"画面大幅滚动=人物开始寻路=点中\",干净收手转入寻路;否则才重试。这与 0.3.28 自动扫偏移用的是同一个可信信号(实测命中≈20、未中≈1~3)。名字消失保留为次要兜底\n- 改动:`contracts.GameState` 新增 `scene_diff` 字段;`perception` 连续两帧算差值;`decision/shimen` 用它收口。全量测试 23/23 通过 0.3.28 的自动扫偏移在人少处实测一锤命中:偏移 (-21,0)(落点 599,388)让整屏画面变化 20.9,而所有未中偏移仅 1~3、静止基线 1.8——信号干净、阈值 16 轻松区分。本版把这个值固化进点击落点,师傅这一下稳定命中、人物自动前往。\n- ⚠️ 已知待修:正常流程里\"点击生效\"仍用旧的\"师傅名消失\"判定,而点师傅触发的是自动寻路、名字不消失 → 成功点击后会有 1~2 次多余重试点击。下一版改用\"画面滚动=点中\"作为正确信号收口"
+  "version": "0.3.31",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.31/JidoMH-0.3.31.zip",
+  "sha256": "c52f6b3aad274da01fba48b857c25ce20fbde58b1b2f7b51355997aac812a0a7",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.31/files.json",
+  "notes": "- **新增诊断:相对增量闭环落点测试(图1)。** 验证\"软件能不能纯靠自己把 raw input 游戏的自绘光标点准\"——不再走\"绝对定位 + 固定补偿偏移\"那条治标老路,改成 raw input 的正解:**关鼠标加速(1:1)→ 发相对增量(`MOUSEEVENTF_MOVE` 不带 `ABSOLUTE`)→ 读 `GetCursorPos` 算残差、逐步补、闭环收住**。对客户区六点(含四角)逐点闭环移动后抓帧标注,看白光标落不落得准:压在准星上=图1 成立、软件能点准;角点偏得比中心多=有灵敏度倍率 k(标一个全局 k);乱偏/残差收不住=软件天花板(该上 HID)。只移动不点击,退出自动还原鼠标加速/指针速度。新增 `tools/rel_click_probe.py`\n- **诊断模式 UI:勾选框 → 下拉选择器。** 原\"诊断模式:点击落点测试\"单一勾选框换成下拉,三项:关闭(正常刷师门)/ 旧:绝对落点测试 / 新:相对增量闭环(图1)。`DiagnosticWorker` 多接 `probe` 参数,选哪项跑哪个探针;其余信号接线、师门主流程一概不动。诊断项仍是选了即短路、不需要回师门键/师傅名\n- 纯诊断与 UI 改动,不影响正常刷师门行为"
 }
