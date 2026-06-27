@@ -1,6 +1,6 @@
 {
-  "version": "0.3.14",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.14/JidoMH-0.3.14.zip",
-  "sha256": "6b47934d9aba01ab71d8e3c0e15f5c7bf93daabc9f05e10495707dc144437e6c",
-  "notes": "- 修复找师傅误报「预置库里没有该师傅的名字模板」:根因是识别层用 `cv2.imread` 读模板,而它在 Windows 上不支持中文/非 ASCII 路径,碰到 `name__东海龙王.png` 会返回 None——文件明明在(开跑前用 `os.path.exists` 校验能过、引擎照常启动),却在加载时静默读不到。改用 Unicode 安全的 `np.fromfile` + `cv2.imdecode`(与 v0.3.11 采集写入端的 `imencode`+`open` 对称),中文师傅名模板现可正常加载\n- 影响:此前所有中文名预置模板(如东海龙王)采集并推送后仍无法被识别,本版修复后即生效;配合开发者标注台的本地仓库 override,采集后无需每次发版即可本地即时测试"
+  "version": "0.3.15",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.15/JidoMH-0.3.15.zip",
+  "sha256": "80f4f43bf017651b17ed5fe0e9239729e68d723793edcd454be432752da0d846",
+  "notes": "- 新增 `[坐标诊断]` 日志:每次命中师傅名时打印整条坐标链路——图内匹配中心 → 缩放 s(截图宽÷窗口宽,100% 缩放应≈1.0)→ 窗口原点 → 最终落点逻辑坐标。配合点击后的 `[落点]` 探针,真机一跑就能定位「点偏」出在哪一环(坐标换算 vs 实际落点),不必再靠猜\n- 修正日志措辞:找师傅命中行原误写成 `OCR conf=`,实际是灰度模板匹配分,改为 `模板匹配 conf=`;并清理 `decision/shimen.py` 内过时的「OCR」注释/文档字符串(当前找师傅主力是灰度模板匹配,非 OCR)\n- 删除死代码:`execution/humanize.py` 里从未被调用的 `cursor_catchup` 停顿项(原为旧 Mac 兼容层「等游戏内光标追上」遗留;原生 Windows 无此延迟,留着只会误导)\n- 文档:`ARCHITECTURE.md` 4.1 感知层补充醒目说明——师门「找师傅」当前主要依赖灰度多尺度模板匹配(`match_template_gray`),并写清坐标链路与历史遗留措辞\n- 测试:修掉 `test_find_and_required_missing_with_override` 的过期前提(改用永不入库的假名字),不再因仓库已提交真实师傅模板而误失败;全套 20 项通过"
 }
