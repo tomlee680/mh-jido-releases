@@ -1,7 +1,7 @@
 {
-  "version": "0.3.39",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.39/JidoMH-0.3.39.zip",
-  "sha256": "ad7aecca27acc699ef68f5bd340ca51aac58b0ca4a3b27ca7da1cde6a9ee178b",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.39/files.json",
-  "notes": "- **修复「点师傅时光标滑出去很远、不收敛」。** 根因是游戏光标闭环的**第一发**在「假设增益 1:1」下按**全残差**打出去;梦幻这类 raw input 游戏相对注入有自己的灵敏度倍率(往往 2~3 倍),于是第一发过冲飞出 80px ROI,而旧逻辑「ROI 里找不到光标就直接退出」,导致在线估增益(第二轮才启动)永远够不着 → 留下大残差不收敛(正是日志 `收敛=False 残差=(259,-154)` 的成因)。两处根因级修正:① **自标定**——增益未知时先发一小步(`CURSOR_CALIB_STEP=40`)测出真实增益,再按残差/增益比例收敛,不预设 1:1;② **丢失即重捕**——ROI 探针返回 None 时回退整帧搜重新锁定光标,一次过冲不再让闭环阵亡\n- **把闭环控制算法抽成纯函数 `execution/servo.py`(与 SendInput 解耦),可跨平台单测。** 新增 `tests/test_servo_convergence.py`:用模拟器(灵敏度未知 + 检测/移动噪声 + ROI 丢失)证明新环在 0.4~3.0 整段灵敏度区间都能 ≤2~3 次纠偏收敛,且复现旧环在高灵敏度下的发散。`controller._converge_on_cursor` 现在只负责把 probe/move_rel 接进算法"
+  "version": "0.3.40",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.40/JidoMH-0.3.40.zip",
+  "sha256": "0a8b3933e5d2510bb4919ccc6cd9c6f2c9af081a6cdde84de8dd29db869c8c12",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.40/files.json",
+  "notes": "- **修复「光标滑到位就迅速挪开、不断位移」(0.3.39 引入的振荡)。** 根因:**师傅名是「可点的」,光标移到它上面会从箭头变手型**,而闭环只用箭头模板追踪 → 光标一到目标,箭头就匹配不到了;此时 0.3.39 加的「丢失即整帧重捕」反而去整屏找箭头,抓到远处一个**假匹配**(箭头阈值 0.55 偏低),按假残差把光标甩开 → 离开名字又变回箭头被追回 → 再变手型再被甩开,于是不断位移(日志 `收敛=False 残差=(-243,-225)` 即此)。两处根因级修正:\n  - **箭头 + 手型一起追**(`state.find_game_cursor` 逐模板匹配取最高分,新增 `last_cursor_kind` 诊断):光标在可点目标上是手型、在面板底色上是箭头,两者都认才不会在「到位那一刻」丢失。日志会多打一段 `形态=arrow/hand`\n  - **重捕加合理性闸门**(`servo.converge`):整帧重捕到的点若与「上一步本应送到的位置 exp=上次光标+增益·上次增量」严重不符(超过 `CURSOR_ARRIVAL_PX=60`),判为远处假匹配 → 丢弃并按「已到位」就地收尾,**绝不甩开**;真过冲(重捕点≈exp)才收下继续纠。即使没采手型模板也不会再振荡\n- 新增回归 `test_find_game_cursor_tracks_hand_sprite`、`test_v39_oscillates_into_false_match`、`test_new_loop_arrives_instead_of_flinging`(模拟器复现旧振荡 + 验证新环就地到位)"
 }
