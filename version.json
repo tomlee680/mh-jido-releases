@@ -1,7 +1,7 @@
 {
-  "version": "0.3.42",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.42/JidoMH-0.3.42.zip",
-  "sha256": "80641c88c6bc8e6c9d53ce83292ee2f1ffb3e0d4410193d68474ff1801bb364c",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.42/files.json",
-  "notes": "- **[诊断] 点击行加打「系统光标位置 + 与目标差 + 光标匹配分」。** 用来确认怀疑的真因:屏幕上有两个光标——游戏自绘光标(箭头,在 mss 截图里,伺服的就是它)与 Windows 系统光标(会变手型,mss 抓不到);而 `_tap` 的 SendInput 点击落在**系统光标**处。游戏对相对移动有自己的灵敏度倍率,两个光标在伺服中会分叉,于是「游戏光标精准到位、点击却落在偏开的系统光标处」→ 点空。日志新增 `系统光标=(x,y) 与目标差=(dx,dy) 光标conf=…`:若 `与目标差` 有几十像素,即坐实分叉;`光标conf` 用来判断 `等手型=miss` 是手型模板没匹配上还是画面里压根没有手型。本版不改行为,只采数据"
+  "version": "0.3.43",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.43/JidoMH-0.3.43.zip",
+  "sha256": "9d420228788cba0a747b6e14ddb198f8264eb038c686cd531fd4f88b82c1e02e",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.43/files.json",
+  "notes": "- **标注台新增「两帧相减抠光标 + 掩码」采集,根治手型匹配不稳。** 手型光标永远压在师傅名文字上 → 单帧模板匹配把背景文字也算进相关分,匹配不稳;箭头只是「背景干净、运气好」。解法是给光标配掩码,匹配时只比光标本体像素、无视背景,文字再变也不影响。要拿到干净掩码就采两帧:同一位置一帧有光标悬停、一帧把鼠标移开只剩背景,两帧相减——变了的像素就是光标本体,没变的是背景。新增 `capture_cursor_masked`:① 倒计时抓第1帧(有光标)→ ② 倒计时提示移开鼠标抓第2帧(纯背景)→ ③ 框选光标 → ④ 滑条调阈值实时预览(原图|掩码|红叠三联,确认只抠到光标)→ ⑤ 点尖端热点;产物为 `cursor/<slot>.png` + `<slot>.mask.png` + 热点 json。标注台光标行改为两颗按钮:「带掩码(两帧)」为主、「单帧」兜底(背景干净时用)\n- 匹配侧无需改动:`find_game_cursor` 早已支持掩码(有 `.mask.png` → `TM_CCORR_NORMED(mask)`,无 → `TM_CCOEFF_NORMED`),本版只是把掩码喂上。新增回归 `tests/test_cursor_mask.py`(抠光标排背景 / 两帧相同→掩码全黑保护 / 掩码模板在大图精确定位)\n- 用法:在真机标注台对 arrow 和 hand 各点「带掩码」重采一次(采到即自动启用),再回归命中率"
 }
