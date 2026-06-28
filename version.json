@@ -1,7 +1,7 @@
 {
-  "version": "0.3.37",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.37/JidoMH-0.3.37.zip",
-  "sha256": "24c9e7f297f827b3bb8c2a91776baa983eb5488d249521e4e26a8d5e17741113",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.37/files.json",
-  "notes": "- **标注台采集游戏光标加 5 秒倒计时。** 之前点采集按钮那一刻鼠标在 app 上、游戏里没光标,直接抓帧拍不到目标光标。现在点「采集箭头/手型」后先弹一个角落小窗读秒 5s,留时间把鼠标移进游戏、悬停出要采的形态(箭头=面板底色;手型=悬停可点的师傅名),倒计时结束那一刻才抓帧。用 cv2.waitKey 逐秒刷新(响应式、无需键盘焦点)。只对采集游戏光标生效,师傅名采集不受影响\n- (本版一并包含未单独发布的 0.3.36:见下)"
+  "version": "0.3.38",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.38/JidoMH-0.3.38.zip",
+  "sha256": "2c7bdd787e8517fb23dc50746a90fe48b56aa2beec0f64c6db0548de923efdf7",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.38/files.json",
+  "notes": "- **标注台「游戏光标」也显示覆盖状态。** 之前是两个固定按钮,采完看不出成没成。现在和师傅行同款:有图→`✓ 已标`+按钮「重采」,没图→`✗ 缺`(必采)/`— 未标`(可选)+按钮「采集」,采完立刻刷新\n- **删除「锚点(世界按钮)」可选槽位。** 它只是个缩小搜索范围的可选优化,师傅名匹配 conf 已稳到 0.8+,用不上;移除后界面只剩「名字」一个必采槽 + 游戏光标,师傅识别改为整窗口找(同步删掉 state.py 里那段缩范围逻辑)"
 }
