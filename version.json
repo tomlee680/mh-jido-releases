@@ -1,7 +1,7 @@
 {
-  "version": "0.3.41",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.41/JidoMH-0.3.41.zip",
-  "sha256": "3568dce558133bb0f7a40a8741e32c009abc7ace6082cb3fc6233e4314b2f63d",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.41/files.json",
-  "notes": "- **修复「光标已精准到位、却点不中」。** 现象:伺服已稳定 `收敛=True 残差≈2px`,但画面不滚动、点击不生效,且日志 `形态=arrow`。根因:**悬停到可点的师傅名上,游戏把光标更新成手型需要一点时间**;我们落点后立刻就点,手型还没出来,游戏就不认这次点击。修法不写死延迟(50/200 都是猜):落点后**原地不动轮询光标形态,一旦变手型立刻点**——等多久由游戏自己决定,封顶 `HAND_WAIT_S=0.4s`(到了还没出手型才退回点中心兜底)。新增执行层 `_settle_on_hand` + 形态探针 `engine._probe_cursor_kind`(与位置探针共用一次抓帧匹配)。日志点击行新增 `等手型=hit/miss`,配合 `形态=hand` 可一眼看出点击前光标是否已翻成手型\n- 期间**不发任何移动**,绝不推开伺服好的光标;无手型模板(没采/开发机)→ 不等手型、直接点(退化为原行为)"
+  "version": "0.3.42",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.42/JidoMH-0.3.42.zip",
+  "sha256": "80641c88c6bc8e6c9d53ce83292ee2f1ffb3e0d4410193d68474ff1801bb364c",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.42/files.json",
+  "notes": "- **[诊断] 点击行加打「系统光标位置 + 与目标差 + 光标匹配分」。** 用来确认怀疑的真因:屏幕上有两个光标——游戏自绘光标(箭头,在 mss 截图里,伺服的就是它)与 Windows 系统光标(会变手型,mss 抓不到);而 `_tap` 的 SendInput 点击落在**系统光标**处。游戏对相对移动有自己的灵敏度倍率,两个光标在伺服中会分叉,于是「游戏光标精准到位、点击却落在偏开的系统光标处」→ 点空。日志新增 `系统光标=(x,y) 与目标差=(dx,dy) 光标conf=…`:若 `与目标差` 有几十像素,即坐实分叉;`光标conf` 用来判断 `等手型=miss` 是手型模板没匹配上还是画面里压根没有手型。本版不改行为,只采数据"
 }
