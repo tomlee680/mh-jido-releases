@@ -1,7 +1,7 @@
 {
-  "version": "0.3.47",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.47/JidoMH-0.3.47.zip",
-  "sha256": "025963e5a8e7c27cd4fbe72ea377538ff8b9979b71d790e1c82234cfc0c982cc",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.47/files.json",
-  "notes": "- **根治「伺服报很准却没点中、鼠标先快速滑动再点偏」。** 真因=伺服**谎报收敛**:`servo.converge` 的「丢失即到位」分支把「上一步过冲把箭头甩出 ROI」误当成「光标到目标变手型了」,无条件 `return 收敛=True`,`controller` 信了就在**光标实际飞到的地方**盲点 → 点空。按定案**放弃「变手型=到位」整套假设**:箭头看不见只可能是过冲甩出 ROI,绝不当成到位\n- **只在「真·看到箭头落在目标 ≤tol」时才落指。** `servo.py` 删掉假收敛分支(及 `been_close`):ROI 丢光标只做一次整帧重捕继续纠偏,真找不到 → 回报 `收敛=False` 交回决策层重试,绝不谎报到位。`controller._click_humanlike` 落指条件由 `found` 收紧为 `found and converged`,没确认箭头压在目标上就不点、回报失败重试\n- **限步长防「快速滑动」过冲。** `CURSOR_MAX_STEP 400→120`(略大于 ROI 半径 80):增益估歪也飞不出屏,过冲最多甩出 ROI 一点点、由整帧重捕拉回;`CURSOR_ARRIVAL_PX` 弃用(留作签名兼容)\n- 测试:旧 `test_new_loop_arrives_instead_of_flinging`(断言「丢光标=到位」)改为 `test_lost_arrow_never_fakes_arrival`(丢光标 → 收敛=False、不甩到假匹配),全量 32 项绿"
+  "version": "0.3.48",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.48/JidoMH-0.3.48.zip",
+  "sha256": "160e9cb7dcd87b7241c825c5e10cab078d788d2d5d0b0b66560e7a3de400aec1",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.48/files.json",
+  "notes": "- **为接 kmbox 硬件 HID 铺路:新增输入后端抽象层 `execution/backend.py`。** 点不中转「硬件 HID」路线——把「怎么把移动/点击发到系统/游戏」从控制逻辑里抽出来,controller 只面向统一的 `InputBackend` 协议。三个实现:`KmboxBackend`(kmbox B 串口,115200,发 `km.move(dx,dy)`/`km.left(1|0)`)、`SendInputBackend`(原 `_si_*` + 关加速/1:1 搬入,开发/回退用)、`PynputBackend`(跨平台回退)。换后端 = 换一个实现,拟人轨迹/游戏光标伺服一概不动\n- **关键差异:kmbox 是纯 HID 相对增量设备,没有绝对定位**(`supports_abs=False`)。所以 kmbox 下一切定位都走「游戏光标模板匹配 + 相对增量闭环」:`controller._glide` 按后端分流(支持绝对定位走老路;kmbox 用 `cursor_probe` 读当前游戏光标作起点、把贝塞尔轨迹差分成相对增量发出);`_click_humanlike` 对无绝对定位后端**强制伺服**,无 probe 即不盲点、交回重试。`_tap` 改用 `backend.left_down/up`(仍是唯一按下点,不变量测试改追这个)\n- **配置开关 + 资源释放。** `EngineConfig` 新增 `input_backend`(None→按平台缺省;接硬件后填 `\"kmbox\"`)/`kmbox_port`/`kmbox_baud`;`engine.close` 调 `controller.close()` 关串口、还原系统鼠标设置。`requirements.txt` 加 `pyserial`。键盘仍走 pynput(梦幻按键非 raw-input 敏感),本版只把鼠标移到后端层\n- 本版**不改现有 SendInput 行为**(不插 kmbox 时跑起来与 0.3.47 一致),纯为硬件到货前的代码就绪。新增 `tests/test_kmbox_backend.py`(假串口断言发出字节严格为 `km.move/km.left`),全量 41 项绿\n- 待真机:配 `input_backend=\"kmbox\"` + COM 口 → 标注台采 arrow 光标模板 → 跑命中率回归"
 }
