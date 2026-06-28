@@ -1,7 +1,7 @@
 {
-  "version": "0.3.31",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.31/JidoMH-0.3.31.zip",
-  "sha256": "c52f6b3aad274da01fba48b857c25ce20fbde58b1b2f7b51355997aac812a0a7",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.31/files.json",
-  "notes": "- **新增诊断:相对增量闭环落点测试(图1)。** 验证\"软件能不能纯靠自己把 raw input 游戏的自绘光标点准\"——不再走\"绝对定位 + 固定补偿偏移\"那条治标老路,改成 raw input 的正解:**关鼠标加速(1:1)→ 发相对增量(`MOUSEEVENTF_MOVE` 不带 `ABSOLUTE`)→ 读 `GetCursorPos` 算残差、逐步补、闭环收住**。对客户区六点(含四角)逐点闭环移动后抓帧标注,看白光标落不落得准:压在准星上=图1 成立、软件能点准;角点偏得比中心多=有灵敏度倍率 k(标一个全局 k);乱偏/残差收不住=软件天花板(该上 HID)。只移动不点击,退出自动还原鼠标加速/指针速度。新增 `tools/rel_click_probe.py`\n- **诊断模式 UI:勾选框 → 下拉选择器。** 原\"诊断模式:点击落点测试\"单一勾选框换成下拉,三项:关闭(正常刷师门)/ 旧:绝对落点测试 / 新:相对增量闭环(图1)。`DiagnosticWorker` 多接 `probe` 参数,选哪项跑哪个探针;其余信号接线、师门主流程一概不动。诊断项仍是选了即短路、不需要回师门键/师傅名\n- 纯诊断与 UI 改动,不影响正常刷师门行为"
+  "version": "0.3.32",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.32/JidoMH-0.3.32.zip",
+  "sha256": "a11c55f5798b8f8f00106248a6d147bf598eb91dd41dc9068705631ed1d084d6",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.32/files.json",
+  "notes": "- **图1 落地:执行层从「绝对定位 + 固定补偿偏移」换成「相对增量 + 闭环纠偏」。** 0.3.31 的诊断探针实测六点(含四角)闭环残差全 0、无灵敏度倍率、白光标尖端压在准星上——确认 raw input 游戏的自绘光标可纯靠软件精确推到目标。本版把这套接进 `execution/controller.py`:进程启动关 Windows 鼠标加速 + 指针速度设 10(1:1,退出 atexit 自动还原);移动改发相对增量(`_si_move_rel`,`MOUSEEVENTF_MOVE` 不带 `ABSOLUTE`);滑行途经点单发、**最终落点 `_tap` 走闭环纠到 ±1px**(`_move_rel_to(closed=True)`)。拟人贝塞尔轨迹与正态落点保留\n- **`MASTER_PROBE_OFFSET` 归零并退役**:不再需要那个要人盯着的补偿魔法数,`_landing_px` 恢复正常的框内正态散布(像人,不总戳正中)。偏移不是被「补偿」掉,是被闭环「消化」掉——也根除了之前偶尔 ±2px 的随机抖动\n- **一键回退**:新增总开关 `USE_REL_CLOSED`(`execution/controller.py`),改 `False` 即恢复旧的 SendInput 绝对定位\n- 检测画像不变(仍是 SendInput 注入);抗检测是另一条轴,后续上 HID 设备时只换最底层发增量那一步,闭环逻辑不动"
 }
