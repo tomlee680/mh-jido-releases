@@ -1,7 +1,7 @@
 {
-  "version": "0.3.32",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.32/JidoMH-0.3.32.zip",
-  "sha256": "a11c55f5798b8f8f00106248a6d147bf598eb91dd41dc9068705631ed1d084d6",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.32/files.json",
-  "notes": "- **图1 落地:执行层从「绝对定位 + 固定补偿偏移」换成「相对增量 + 闭环纠偏」。** 0.3.31 的诊断探针实测六点(含四角)闭环残差全 0、无灵敏度倍率、白光标尖端压在准星上——确认 raw input 游戏的自绘光标可纯靠软件精确推到目标。本版把这套接进 `execution/controller.py`:进程启动关 Windows 鼠标加速 + 指针速度设 10(1:1,退出 atexit 自动还原);移动改发相对增量(`_si_move_rel`,`MOUSEEVENTF_MOVE` 不带 `ABSOLUTE`);滑行途经点单发、**最终落点 `_tap` 走闭环纠到 ±1px**(`_move_rel_to(closed=True)`)。拟人贝塞尔轨迹与正态落点保留\n- **`MASTER_PROBE_OFFSET` 归零并退役**:不再需要那个要人盯着的补偿魔法数,`_landing_px` 恢复正常的框内正态散布(像人,不总戳正中)。偏移不是被「补偿」掉,是被闭环「消化」掉——也根除了之前偶尔 ±2px 的随机抖动\n- **一键回退**:新增总开关 `USE_REL_CLOSED`(`execution/controller.py`),改 `False` 即恢复旧的 SendInput 绝对定位\n- 检测画像不变(仍是 SendInput 注入);抗检测是另一条轴,后续上 HID 设备时只换最底层发增量那一步,闭环逻辑不动"
+  "version": "0.3.33",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.33/JidoMH-0.3.33.zip",
+  "sha256": "98a8232a94526adbc32fb964c207b94ae2df6ff4e3d09902527b398ea8c34c32",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.33/files.json",
+  "notes": "- **新增「点击瞬间截帧」诊断,定位「日志说点准、游戏指针却偏」的 raw input 错位。** 反复出现:落点日志(`设点=按下前=释放后`,残差 0)显示点准,但肉眼看游戏自绘指针并没压在目标文字上。根因:日志读的是**系统光标**(`GetCursorPos`),raw input 游戏的**自绘指针**可与系统光标错开,日志看不见这个差。本版在真实点击的「按下前」抓游戏窗口那一帧(mss 抓真实画面、游戏指针在内),在目标点画绿准星存到 `~/jido_点击诊断/click_*.png`——绿准星=目标、白指针=游戏指针,差距一目了然。执行层加 `click_frame_sink` 钩子、引擎实现 `_capture_click_frame` 并接线;开关 `CLICK_FRAME_DIAG`(`engine.py`,排查完改 False)\n- 纯诊断,不改点击行为"
 }
