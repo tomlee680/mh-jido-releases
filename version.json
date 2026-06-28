@@ -1,7 +1,7 @@
 {
-  "version": "0.3.35",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.35/JidoMH-0.3.35.zip",
-  "sha256": "ad6272f5e7c9def8a78b7161b1f2f5837293e32c2bf932d88e75e5dc00b6ed13",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.35/files.json",
-  "notes": "- **指针差距探针改成回合式:提示移动 → 倒计时 → 抓帧 → 再提示。** 原来是定时盲抓,节奏不好把握;现在每帧先在日志提示「把鼠标移到一处并停住」,再倒计时 3s(给你移到位+停稳),然后抓帧,如此 8 帧。倒计时可被「停止」秒级打断。其余(零注入、红准星=系统指针、抓帧前后判稳)不变。"
+  "version": "0.3.36",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.36/JidoMH-0.3.36.zip",
+  "sha256": "a77c27d34d8d9e1aff0cc60e6ac46ee65e14052445b35a6675355f4e1f21a4df",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.36/files.json",
+  "notes": "- **图1 收口:闭环反馈源从「系统光标 GetCursorPos」换成「模板匹配出的游戏自绘光标」。** 根因——raw input 游戏里系统光标 ≠ 游戏自绘光标且随边缘钳制漂移,旧闭环把系统光标收敛到 0 残差、游戏光标却没到位(任何静态补偿偏移都治不好)。新做法:模板匹配游戏光标 sprite → 算尖端到目标残差 → 发相对增量 → 每轮重测、在线估增益、迭代收敛(visual servoing,天然抗漂移);找不到游戏光标就不盲点、回报失败让决策层重试。`scene_diff` 仍作结果验证。新增 `perception.find_game_cursor` + `cursor` 模板类目(`cursor/arrow.png` + 可选掩码 + 尖端热点 json)+ 标注台「采集游戏光标」入口;开关 `USE_CURSOR_SERVO`。详见 `点击命中_根因与策略.md` 第十节\n- **彻底移除 OS 光标检测整条路径**:`GetCursorPos`/`_pos`/`_move_rel_to`/系统光标闭环/`_si_move_abs`-vs-rel 开关纠缠全删。移动层现在只有两件事:绝对 SendInput 定位(粗到位)+ 游戏光标伺服(相对增量精校)\n- **清理查 bug 时搭的全部脚手架**:静态补偿偏移(`MASTER_PROBE_OFFSET`)、标定模式、自动扫偏移、点击截帧/悬停/坐标诊断、识别存证图、GUI「诊断模式」下拉、`tools/` 全部落点探针(5 个);以及切到模板匹配前的旧 OCR 读任务面板路径(`perception/ocr.py`、`capture.py`、`read_task_panel` 等)与其依赖 `rapidocr-onnxruntime`/`onnxruntime`\n- 检测画像不变(仍是前台 SendInput);抗检测是另一条轴,后续上 HID 时只换最底层发增量那一步"
 }
