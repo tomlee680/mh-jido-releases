@@ -1,7 +1,7 @@
 {
-  "version": "0.3.38",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.38/JidoMH-0.3.38.zip",
-  "sha256": "2c7bdd787e8517fb23dc50746a90fe48b56aa2beec0f64c6db0548de923efdf7",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.38/files.json",
-  "notes": "- **标注台「游戏光标」也显示覆盖状态。** 之前是两个固定按钮,采完看不出成没成。现在和师傅行同款:有图→`✓ 已标`+按钮「重采」,没图→`✗ 缺`(必采)/`— 未标`(可选)+按钮「采集」,采完立刻刷新\n- **删除「锚点(世界按钮)」可选槽位。** 它只是个缩小搜索范围的可选优化,师傅名匹配 conf 已稳到 0.8+,用不上;移除后界面只剩「名字」一个必采槽 + 游戏光标,师傅识别改为整窗口找(同步删掉 state.py 里那段缩范围逻辑)"
+  "version": "0.3.39",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.39/JidoMH-0.3.39.zip",
+  "sha256": "ad7aecca27acc699ef68f5bd340ca51aac58b0ca4a3b27ca7da1cde6a9ee178b",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.39/files.json",
+  "notes": "- **修复「点师傅时光标滑出去很远、不收敛」。** 根因是游戏光标闭环的**第一发**在「假设增益 1:1」下按**全残差**打出去;梦幻这类 raw input 游戏相对注入有自己的灵敏度倍率(往往 2~3 倍),于是第一发过冲飞出 80px ROI,而旧逻辑「ROI 里找不到光标就直接退出」,导致在线估增益(第二轮才启动)永远够不着 → 留下大残差不收敛(正是日志 `收敛=False 残差=(259,-154)` 的成因)。两处根因级修正:① **自标定**——增益未知时先发一小步(`CURSOR_CALIB_STEP=40`)测出真实增益,再按残差/增益比例收敛,不预设 1:1;② **丢失即重捕**——ROI 探针返回 None 时回退整帧搜重新锁定光标,一次过冲不再让闭环阵亡\n- **把闭环控制算法抽成纯函数 `execution/servo.py`(与 SendInput 解耦),可跨平台单测。** 新增 `tests/test_servo_convergence.py`:用模拟器(灵敏度未知 + 检测/移动噪声 + ROI 丢失)证明新环在 0.4~3.0 整段灵敏度区间都能 ≤2~3 次纠偏收敛,且复现旧环在高灵敏度下的发散。`controller._converge_on_cursor` 现在只负责把 probe/move_rel 接进算法"
 }
