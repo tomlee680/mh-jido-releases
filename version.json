@@ -1,7 +1,7 @@
 {
-  "version": "0.3.45",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.45/JidoMH-0.3.45.zip",
-  "sha256": "01a66de05e27282da5dd6f805f06792746eeb545d9b24f4efb0706bdd61ddc6a",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.45/files.json",
-  "notes": "- **删掉已无人引用的 `game_config/templates/cursor/hand.png`**(去掉 hand 后的孤儿模板),光标模板目录只剩 `arrow.png`\n- **点击不再「等手型」,简化为「箭头伺服到位即点」。** 之前落点后要原地轮询光标变成手型才点(`_settle_on_hand`,封顶 0.4s),是为了确认压在可点热区上。但梦幻的箭头/手型都是带动态光晕的图,稳定识别手型本身就难、还拖慢每次点击。改为:游戏光标闭环把**箭头**收敛到落点(残差 ≤ tol)就直接点下去。安全性由 servo 已有的 arrival 闸门保证——箭头逼近目标后若因变手型而在 ROI 里丢失,会被判为「已到位」收尾,绝不重捕乱甩(见 `execution/servo.py`,有回归覆盖)\n- **彻底去掉手型(hand)这条线。** 登记表 `cursor` 槽只剩 `arrow`;`find_game_cursor` 只追箭头;删掉 `_settle_on_hand`/`HAND_WAIT_S`/`cursor_kind_probe`/`engine._probe_cursor_kind` 及点击日志里的 `等手型=…/形态=…`(保留 `光标conf` 诊断)。标注台光标只需采箭头一张\n- **撤回 0.3.43 的「两帧相减掩码」采集。** 梦幻光标自带动态光晕,两帧相减会被光晕的逐帧变化污染、抠不出干净本体,方案不适用;采集回退到 0.3.42 的单帧「采集/重采」。匹配层仍兼容掩码旁文件(有 `.mask.png` 才启用),只是不再用工具去生成\n- 测试随之调整(删手型追踪用例、改登记表期望),全量 32 项绿"
+  "version": "0.3.47",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.47/JidoMH-0.3.47.zip",
+  "sha256": "025963e5a8e7c27cd4fbe72ea377538ff8b9979b71d790e1c82234cfc0c982cc",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.47/files.json",
+  "notes": "- **根治「伺服报很准却没点中、鼠标先快速滑动再点偏」。** 真因=伺服**谎报收敛**:`servo.converge` 的「丢失即到位」分支把「上一步过冲把箭头甩出 ROI」误当成「光标到目标变手型了」,无条件 `return 收敛=True`,`controller` 信了就在**光标实际飞到的地方**盲点 → 点空。按定案**放弃「变手型=到位」整套假设**:箭头看不见只可能是过冲甩出 ROI,绝不当成到位\n- **只在「真·看到箭头落在目标 ≤tol」时才落指。** `servo.py` 删掉假收敛分支(及 `been_close`):ROI 丢光标只做一次整帧重捕继续纠偏,真找不到 → 回报 `收敛=False` 交回决策层重试,绝不谎报到位。`controller._click_humanlike` 落指条件由 `found` 收紧为 `found and converged`,没确认箭头压在目标上就不点、回报失败重试\n- **限步长防「快速滑动」过冲。** `CURSOR_MAX_STEP 400→120`(略大于 ROI 半径 80):增益估歪也飞不出屏,过冲最多甩出 ROI 一点点、由整帧重捕拉回;`CURSOR_ARRIVAL_PX` 弃用(留作签名兼容)\n- 测试:旧 `test_new_loop_arrives_instead_of_flinging`(断言「丢光标=到位」)改为 `test_lost_arrow_never_fakes_arrival`(丢光标 → 收敛=False、不甩到假匹配),全量 32 项绿"
 }
