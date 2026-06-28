@@ -1,7 +1,7 @@
 {
-  "version": "0.3.34",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.34/JidoMH-0.3.34.zip",
-  "sha256": "b7ce94ae4f40635f453b0f34230ce94e305faecccf8387c9ee11e8a1ea043754",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.34/files.json",
-  "notes": "- **新增「真实鼠标:系统指针 vs 游戏自绘指针 差距」探针,验证核心假设「真实输入下两只光标是否 1:1」。** 合成移动(绝对/相对)都点不准,怀疑根因是「游戏自绘指针只忠实跟真实输入、不跟合成输入」。本探针**零注入**:只读 `GetCursorPos` + 截游戏帧(含游戏自绘白指针),在系统指针处画红准星存到 `~/jido_点击诊断/gap_*.png`,**由用户亲手移真鼠标**来测。抓帧前后各读一次系统指针,差大=移动中→标记忽略,只看停住的帧。判读:红准星压在白指针上(或只差固定小量=光标热点)→真实输入 1:1、HID 方案成立;差一截且随位置变→真鼠标也有差、另算。新增 `tools/cursor_gap_probe.py`,接到诊断下拉「真实鼠标:系统vs游戏指针差距」(probe=gap)\n- 纯诊断、零注入,不改任何点击行为"
+  "version": "0.3.35",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.35/JidoMH-0.3.35.zip",
+  "sha256": "ad6272f5e7c9def8a78b7161b1f2f5837293e32c2bf932d88e75e5dc00b6ed13",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.35/files.json",
+  "notes": "- **指针差距探针改成回合式:提示移动 → 倒计时 → 抓帧 → 再提示。** 原来是定时盲抓,节奏不好把握;现在每帧先在日志提示「把鼠标移到一处并停住」,再倒计时 3s(给你移到位+停稳),然后抓帧,如此 8 帧。倒计时可被「停止」秒级打断。其余(零注入、红准星=系统指针、抓帧前后判稳)不变。"
 }
