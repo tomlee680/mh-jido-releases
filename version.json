@@ -1,7 +1,7 @@
 {
-  "version": "0.3.33",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.33/JidoMH-0.3.33.zip",
-  "sha256": "98a8232a94526adbc32fb964c207b94ae2df6ff4e3d09902527b398ea8c34c32",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.33/files.json",
-  "notes": "- **新增「点击瞬间截帧」诊断,定位「日志说点准、游戏指针却偏」的 raw input 错位。** 反复出现:落点日志(`设点=按下前=释放后`,残差 0)显示点准,但肉眼看游戏自绘指针并没压在目标文字上。根因:日志读的是**系统光标**(`GetCursorPos`),raw input 游戏的**自绘指针**可与系统光标错开,日志看不见这个差。本版在真实点击的「按下前」抓游戏窗口那一帧(mss 抓真实画面、游戏指针在内),在目标点画绿准星存到 `~/jido_点击诊断/click_*.png`——绿准星=目标、白指针=游戏指针,差距一目了然。执行层加 `click_frame_sink` 钩子、引擎实现 `_capture_click_frame` 并接线;开关 `CLICK_FRAME_DIAG`(`engine.py`,排查完改 False)\n- 纯诊断,不改点击行为"
+  "version": "0.3.34",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.34/JidoMH-0.3.34.zip",
+  "sha256": "b7ce94ae4f40635f453b0f34230ce94e305faecccf8387c9ee11e8a1ea043754",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.34/files.json",
+  "notes": "- **新增「真实鼠标:系统指针 vs 游戏自绘指针 差距」探针,验证核心假设「真实输入下两只光标是否 1:1」。** 合成移动(绝对/相对)都点不准,怀疑根因是「游戏自绘指针只忠实跟真实输入、不跟合成输入」。本探针**零注入**:只读 `GetCursorPos` + 截游戏帧(含游戏自绘白指针),在系统指针处画红准星存到 `~/jido_点击诊断/gap_*.png`,**由用户亲手移真鼠标**来测。抓帧前后各读一次系统指针,差大=移动中→标记忽略,只看停住的帧。判读:红准星压在白指针上(或只差固定小量=光标热点)→真实输入 1:1、HID 方案成立;差一截且随位置变→真鼠标也有差、另算。新增 `tools/cursor_gap_probe.py`,接到诊断下拉「真实鼠标:系统vs游戏指针差距」(probe=gap)\n- 纯诊断、零注入,不改任何点击行为"
 }
