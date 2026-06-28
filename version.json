@@ -1,7 +1,7 @@
 {
-  "version": "0.3.43",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.43/JidoMH-0.3.43.zip",
-  "sha256": "9d420228788cba0a747b6e14ddb198f8264eb038c686cd531fd4f88b82c1e02e",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.43/files.json",
-  "notes": "- **标注台新增「两帧相减抠光标 + 掩码」采集,根治手型匹配不稳。** 手型光标永远压在师傅名文字上 → 单帧模板匹配把背景文字也算进相关分,匹配不稳;箭头只是「背景干净、运气好」。解法是给光标配掩码,匹配时只比光标本体像素、无视背景,文字再变也不影响。要拿到干净掩码就采两帧:同一位置一帧有光标悬停、一帧把鼠标移开只剩背景,两帧相减——变了的像素就是光标本体,没变的是背景。新增 `capture_cursor_masked`:① 倒计时抓第1帧(有光标)→ ② 倒计时提示移开鼠标抓第2帧(纯背景)→ ③ 框选光标 → ④ 滑条调阈值实时预览(原图|掩码|红叠三联,确认只抠到光标)→ ⑤ 点尖端热点;产物为 `cursor/<slot>.png` + `<slot>.mask.png` + 热点 json。标注台光标行改为两颗按钮:「带掩码(两帧)」为主、「单帧」兜底(背景干净时用)\n- 匹配侧无需改动:`find_game_cursor` 早已支持掩码(有 `.mask.png` → `TM_CCORR_NORMED(mask)`,无 → `TM_CCOEFF_NORMED`),本版只是把掩码喂上。新增回归 `tests/test_cursor_mask.py`(抠光标排背景 / 两帧相同→掩码全黑保护 / 掩码模板在大图精确定位)\n- 用法:在真机标注台对 arrow 和 hand 各点「带掩码」重采一次(采到即自动启用),再回归命中率"
+  "version": "0.3.45",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.45/JidoMH-0.3.45.zip",
+  "sha256": "01a66de05e27282da5dd6f805f06792746eeb545d9b24f4efb0706bdd61ddc6a",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.45/files.json",
+  "notes": "- **删掉已无人引用的 `game_config/templates/cursor/hand.png`**(去掉 hand 后的孤儿模板),光标模板目录只剩 `arrow.png`\n- **点击不再「等手型」,简化为「箭头伺服到位即点」。** 之前落点后要原地轮询光标变成手型才点(`_settle_on_hand`,封顶 0.4s),是为了确认压在可点热区上。但梦幻的箭头/手型都是带动态光晕的图,稳定识别手型本身就难、还拖慢每次点击。改为:游戏光标闭环把**箭头**收敛到落点(残差 ≤ tol)就直接点下去。安全性由 servo 已有的 arrival 闸门保证——箭头逼近目标后若因变手型而在 ROI 里丢失,会被判为「已到位」收尾,绝不重捕乱甩(见 `execution/servo.py`,有回归覆盖)\n- **彻底去掉手型(hand)这条线。** 登记表 `cursor` 槽只剩 `arrow`;`find_game_cursor` 只追箭头;删掉 `_settle_on_hand`/`HAND_WAIT_S`/`cursor_kind_probe`/`engine._probe_cursor_kind` 及点击日志里的 `等手型=…/形态=…`(保留 `光标conf` 诊断)。标注台光标只需采箭头一张\n- **撤回 0.3.43 的「两帧相减掩码」采集。** 梦幻光标自带动态光晕,两帧相减会被光晕的逐帧变化污染、抠不出干净本体,方案不适用;采集回退到 0.3.42 的单帧「采集/重采」。匹配层仍兼容掩码旁文件(有 `.mask.png` 才启用),只是不再用工具去生成\n- 测试随之调整(删手型追踪用例、改登记表期望),全量 32 项绿"
 }
