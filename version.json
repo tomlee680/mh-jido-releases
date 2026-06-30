@@ -1,7 +1,7 @@
 {
-  "version": "0.3.51",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.51/JidoMH-0.3.51.zip",
-  "sha256": "b6d917789010cbb57726cf9001e57f3193493e4895664d78d7b4926d06507b2c",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.51/files.json",
-  "notes": "- **定方案:kmbox B 固件不支持绝对定位(`zero/getpos/moveto` 只回显命令不执行、光标不动),改走视觉闭环 B。** 与社区主流(纯视觉 + 硬件 HID,只用相对 `move`)一致,且不冲突:「眼睛」是截屏 + 游戏自绘光标模板匹配(`cursor_probe`),「手」是 kmbox 相对增量,两者正交;`getpos` 读的是系统光标(raw input 下 ≠ 游戏光标,错的参考系),主流和本方案都不靠它\n- **新增「找师傅·模板分」诊断日志。** `engine.tick` 在找师傅/验证点击相位把师傅名模板匹配的最高分打出来(`best=0.XX / thresh / 命中否`)。0 命中时能一眼区分是「差一点没过阈值」(调阈值/重采模板)还是「压根没匹配上」(面板没开/字太小/截错区);命中叠加图仍落 `game_config/demo` 供对照\n- **kmbox 下跳过开始时的「聚焦点击」。** 无绝对定位时相对增量发出去落点未知、没法\"滑到中心点一下\",且窗口已激活、焦点已在游戏上,这一下纯多余还可能乱点。B 路线下鼠标只在\"视觉伺服点师傅\"那一刻才动 —— 故**开始时鼠标不动属正常,不是故障**(消除上版的误导现象)\n- 单测:全量 41 项绿"
+  "version": "0.3.52",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.52/JidoMH-0.3.52.zip",
+  "sha256": "652c67a4b2f607fb7e92e5fc3e74a3b9ee254bbf9330d2d143539070a7ff2d30",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.52/files.json",
+  "notes": "- **修复「点不中」的真因(四管齐下,真机实测定位)。** 这版把师门点师傅一直点不中、甚至「鼠标剧烈滑出屏幕」的根因一次性堵上:\n  - **A 自动进场。** raw-input 窗口化游戏只在 OS 光标进了窗口客户区后才接管并自绘游戏光标;kmbox 无绝对定位、引擎激活窗口后从不主动把光标送进窗口 → 游戏永远没光标、伺服锁住画面里某个静止假阳性。新增 `controller.prime_into_window(rect)`:GetCursorPos 读窗外真 OS 光标 + kmbox 相对增量把它推进窗口中心(全程 HID,反检测不破),推不动则兜底 `SetCursorPos`;`engine.prime_focus` 的 kmbox 分支改为调它,不再直接跳过(消除上版「开始时鼠标不动属正常」的设计缺口)\n  - **B 开跑前活性检测。** kmbox 注入侧会**间歇性卡死**(串口正常但光标不动,会伪装成一堆「点不中」)。`gui.on_start` 在激活游戏前临时开 kmbox 发一发 `move`、用 GetCursorPos 比对位移:手是死的就**拒绝开跑并提示重插**,而不是白跑一整轮\n  - **C 挡掉假阳性。** 实测真游戏光标匹配 conf≈0.96、画面里静止装饰物的假阳性≈0.72,分得很开。`CURSOR_THRESH_PLAIN` 0.55→0.85:幽灵被拒 → probe 返 None → 伺服「丢了就重搜/交回」,**绝不追幽灵把光标甩出屏幕**\n  - **D 伺服防过冲。** 梦幻游戏光标灵敏度很高,`_est_gain` 原把增益封在 5.0、真实更高时会发散甩飞;放宽到 50.0 让估计贴近真实,`converge/_step` 加阻尼 `damping=0.7`(每步收七成残差、几何收敛,留余量防估歪)+ 单步实际位移封顶 `max_realized=150px`(绝不一步飞出窗口);calib 首发步长 40→10(更安全地测增益)\n- 单测:全量 41 项绿(含 `test_servo_convergence` 跨灵敏度收敛)"
 }
