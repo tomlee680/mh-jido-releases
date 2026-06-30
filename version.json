@@ -1,7 +1,7 @@
 {
-  "version": "0.3.50",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.50/JidoMH-0.3.50.zip",
-  "sha256": "5815f0e2b95f95162ede6f77eca6cffd19c3188af63af5c3f0ef0246a21f943f",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.50/files.json",
-  "notes": "- **新增「🎯 绝对定位探测」按钮:测 kmbox B 支不支持硬件绝对定位。** 背景:raw input 游戏里 OS 光标 ≠ 游戏光标且偏差不可算,通用解法是用 kmbox 自带的硬件坐标里程计(`zero` 校准 → `getpos` 读绝对坐标 → `moveto` 绝对定位)绕开 OS 光标;但便宜的 kmbox B 串口版不一定有这套指令,故先探测再定方案。按官方手册的 raw-input 流程依次发 `screen`(注册屏幕)→ `zero`(校准,光标应冲到屏幕左上角)→ `getpos`(读坐标)→ 两次 `moveto` 到屏幕正中(中间用相对 `move` 推开),每步回显实时打到日志。只移动 + 读回显、**不点击**,安全。判读:zero 冲角 + getpos 返回坐标 + 两次 moveto 落同一点 → 支持(走硬件绝对定位);全无反应 → 不支持(走视觉闭环)。注意 kmbox B 固件常静默无回显,以光标实际动作为准\n- **后端新增 `KmboxBackend.raw(cmd, read_reply=...)`:** 发任意整条指令并可选读回显(`getpos` 这类要返回值的用),命令格式与已验证可用的 `km.move(...)` 一致。探测走独立 `QThread`(`KmboxAbsProbeWorker`),与 kmbox 自检互斥,任务运行中禁用\n- 单测:`tests/test_kmbox_backend.py` 9 项绿;`raw` 收发路径单独验过(write-only + read 兜底)"
+  "version": "0.3.51",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.51/JidoMH-0.3.51.zip",
+  "sha256": "b6d917789010cbb57726cf9001e57f3193493e4895664d78d7b4926d06507b2c",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.51/files.json",
+  "notes": "- **定方案:kmbox B 固件不支持绝对定位(`zero/getpos/moveto` 只回显命令不执行、光标不动),改走视觉闭环 B。** 与社区主流(纯视觉 + 硬件 HID,只用相对 `move`)一致,且不冲突:「眼睛」是截屏 + 游戏自绘光标模板匹配(`cursor_probe`),「手」是 kmbox 相对增量,两者正交;`getpos` 读的是系统光标(raw input 下 ≠ 游戏光标,错的参考系),主流和本方案都不靠它\n- **新增「找师傅·模板分」诊断日志。** `engine.tick` 在找师傅/验证点击相位把师傅名模板匹配的最高分打出来(`best=0.XX / thresh / 命中否`)。0 命中时能一眼区分是「差一点没过阈值」(调阈值/重采模板)还是「压根没匹配上」(面板没开/字太小/截错区);命中叠加图仍落 `game_config/demo` 供对照\n- **kmbox 下跳过开始时的「聚焦点击」。** 无绝对定位时相对增量发出去落点未知、没法\"滑到中心点一下\",且窗口已激活、焦点已在游戏上,这一下纯多余还可能乱点。B 路线下鼠标只在\"视觉伺服点师傅\"那一刻才动 —— 故**开始时鼠标不动属正常,不是故障**(消除上版的误导现象)\n- 单测:全量 41 项绿"
 }
