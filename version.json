@@ -1,7 +1,7 @@
 {
-  "version": "0.3.48",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.48/JidoMH-0.3.48.zip",
-  "sha256": "160e9cb7dcd87b7241c825c5e10cab078d788d2d5d0b0b66560e7a3de400aec1",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.48/files.json",
-  "notes": "- **为接 kmbox 硬件 HID 铺路:新增输入后端抽象层 `execution/backend.py`。** 点不中转「硬件 HID」路线——把「怎么把移动/点击发到系统/游戏」从控制逻辑里抽出来,controller 只面向统一的 `InputBackend` 协议。三个实现:`KmboxBackend`(kmbox B 串口,115200,发 `km.move(dx,dy)`/`km.left(1|0)`)、`SendInputBackend`(原 `_si_*` + 关加速/1:1 搬入,开发/回退用)、`PynputBackend`(跨平台回退)。换后端 = 换一个实现,拟人轨迹/游戏光标伺服一概不动\n- **关键差异:kmbox 是纯 HID 相对增量设备,没有绝对定位**(`supports_abs=False`)。所以 kmbox 下一切定位都走「游戏光标模板匹配 + 相对增量闭环」:`controller._glide` 按后端分流(支持绝对定位走老路;kmbox 用 `cursor_probe` 读当前游戏光标作起点、把贝塞尔轨迹差分成相对增量发出);`_click_humanlike` 对无绝对定位后端**强制伺服**,无 probe 即不盲点、交回重试。`_tap` 改用 `backend.left_down/up`(仍是唯一按下点,不变量测试改追这个)\n- **配置开关 + 资源释放。** `EngineConfig` 新增 `input_backend`(None→按平台缺省;接硬件后填 `\"kmbox\"`)/`kmbox_port`/`kmbox_baud`;`engine.close` 调 `controller.close()` 关串口、还原系统鼠标设置。`requirements.txt` 加 `pyserial`。键盘仍走 pynput(梦幻按键非 raw-input 敏感),本版只把鼠标移到后端层\n- 本版**不改现有 SendInput 行为**(不插 kmbox 时跑起来与 0.3.47 一致),纯为硬件到货前的代码就绪。新增 `tests/test_kmbox_backend.py`(假串口断言发出字节严格为 `km.move/km.left`),全量 41 项绿\n- 待真机:配 `input_backend=\"kmbox\"` + COM 口 → 标注台采 arrow 光标模板 → 跑命中率回归"
+  "version": "0.3.49",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.49/JidoMH-0.3.49.zip",
+  "sha256": "25773dbb0eb5522dfcc6e5d46fd7c0c19327f72a5d5922e5a25270eb4ea157f4",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.49/files.json",
+  "notes": "- **真机接入 kmbox:默认输入后端写死为硬件 HID。** 实物到货(KmBox B+,板载 CH340,串口在 Win 上枚举为 `USB-SERIAL CH340`)。`EngineConfig.input_backend` 默认值由 `None` 改为 `\"kmbox\"`——GUI/CLI 都不覆盖此项,改这一处即两条入口全生效(单一真相源)。`kmbox_port` 保持 `None` 走 `autodetect_port()` 按 CH340 的 VID:PID(1A86:7523)自动找口,比写死 COM 号稳(COM 号随物理 USB 口变,芯片号不变)。不接盒子时启动即报错,符合闭环原则(失败就响,不假装成功)\n- **新增「🔌 kmbox 自检」按钮(状态栏,打包版可见)。** 一键后台晃动光标:探口 → 开串口(115200)→ 来回水平移动 6 次(只移动不点击),结果实时打到日志面板。光标左右来回跳 = 整条硬件链路(串口控制 + 受控PC 注入)通;探不到口或光标不动会分别给出排查指向。自检走独立 `QThread`(`KmboxSelfCheckWorker`)不卡界面,任务运行中禁用、自检期间禁用开始\n- 单测:`tests/test_kmbox_backend.py` 9 项绿;改默认值不触及任何测试(测试均用注入 transport,不走引擎默认后端)\n- 待办:标注台采 arrow 游戏光标模板 → 跑命中率回归"
 }
