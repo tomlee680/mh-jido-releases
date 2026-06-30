@@ -1,7 +1,7 @@
 {
-  "version": "0.3.53",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.53/JidoMH-0.3.53.zip",
-  "sha256": "ef29dc29262fcdefd0ab846c5a6cc03be7c1247c8534cc6742c352affdba2042",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.53/files.json",
-  "notes": "- **修复光标采样根因:模板缺掩码 → 匹配恒为 0.00 → 点击被伺服闸门挡死(从头到尾没点下去)。** 真机日志里师傅名 `conf=1.00` 完美命中、但「游戏光标闭环 找到=False 光标conf=0.00」每轮复现、画面从不滚动——根因不是「点偏」而是「根本没点」:`_click_humanlike` 走游戏光标伺服,`find_game_cursor` 全帧搜恒返 None(`found=False`)→ 在 `_tap` 之前就 return、回报 `success=False` → 决策层判 `exec_failed` 一路重试到回师门。而 `find_game_cursor` 失败的真因:`cursor/arrow.png` **没有掩码**,识别层退回无掩码 `TM_CCOEFF_NORMED`、拿 33×35 框里 **~80% 的背景**一起灰度比 → 采集时背景 A、运行时背景 B → 分被背景拖垮 → 不过阈值。社区既定:小 sprite(光标)做模板匹配**必须带掩码**,背景像素不参与打分(参 OpenCV 社区 / LearnCodeByGaming)。\n  - **采集端补掩码(`labeling/capture.py`)。** `capture_cursor` 改为:拖框紧贴光标后,`_auto_cursor_mask` 用**边框色键**自动抠出光标本体二值掩码(取最外一圈像素中位色作背景基准 → 逐像素距离阈值 → 形态学去杂点/补洞 → 保留最大连通域),并排预览 `[原图|掩码|只留光标]` 供肉眼确认(任意键接受 / m 放弃),接受即存 `cursor/arrow.mask.png`。运行端无需改:`find_game_cursor` 一旦发现 `.mask.png` 就自动走带掩码的 `TM_CCORR_NORMED`。\n  - **强制标尖端热点。** 旧版没存 `arrow.json` → 伺服拿**框心**当光标位,但真尖端在框左上角 → 即便匹配上也会稳定偏右下 ~半个光标。采集流程把点尖端这步显式化,未标会强提示重采。\n  - **诊断改打真实相关分。** `find_game_cursor` 的 `last_cursor_conf` 不再「没过阈值就置 0」,改记**真实最高相关分**(即便没过阈值)→ 日志能一眼区分「画面里压根没匹配上(分很低=模板/掩码问题)」vs「光标在、就差一点(分接近阈值=调阈值)」。\n  - **待真机:** 重采 `arrow`(带掩码 + 尖端)→ 跑一轮看真实分,据此把 `CURSOR_THRESH_MASK`(现 0.85)调到合适值;掩码若不够干净,后续再加一道颜色判据兜底(梦幻光标青/黄有颜色优势)。"
+  "version": "0.3.54",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.54/JidoMH-0.3.54.zip",
+  "sha256": "16c54e7fb82a077238b7fe93c0805e449308b3d540ea04d30db07ec65a970d72",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.54/files.json",
+  "notes": "- **修复采集后残留一个关不掉的「僵尸」OpenCV 窗口(采集后那张图样)。** 标注台是 Qt 进程,在它里面开 HighGUI 窗口(`selectROI` / 掩码预览 / 点尖端 / 倒计时)时,`cv2.destroyAllWindows()` 只发销毁请求、不驱动窗口管理器事件队列 → 窗口残留成关不掉的僵尸窗。新增 `_close_windows()`:destroy 后再 pump 5 次 `cv2.waitKey(1)` 把事件走完,窗口才真正消失;采集流程里所有关窗(共 5 处)统一走它,不再直接 `destroyAllWindows()`。"
 }
