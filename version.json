@@ -1,7 +1,7 @@
 {
-  "version": "0.3.49",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.49/JidoMH-0.3.49.zip",
-  "sha256": "25773dbb0eb5522dfcc6e5d46fd7c0c19327f72a5d5922e5a25270eb4ea157f4",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.49/files.json",
-  "notes": "- **真机接入 kmbox:默认输入后端写死为硬件 HID。** 实物到货(KmBox B+,板载 CH340,串口在 Win 上枚举为 `USB-SERIAL CH340`)。`EngineConfig.input_backend` 默认值由 `None` 改为 `\"kmbox\"`——GUI/CLI 都不覆盖此项,改这一处即两条入口全生效(单一真相源)。`kmbox_port` 保持 `None` 走 `autodetect_port()` 按 CH340 的 VID:PID(1A86:7523)自动找口,比写死 COM 号稳(COM 号随物理 USB 口变,芯片号不变)。不接盒子时启动即报错,符合闭环原则(失败就响,不假装成功)\n- **新增「🔌 kmbox 自检」按钮(状态栏,打包版可见)。** 一键后台晃动光标:探口 → 开串口(115200)→ 来回水平移动 6 次(只移动不点击),结果实时打到日志面板。光标左右来回跳 = 整条硬件链路(串口控制 + 受控PC 注入)通;探不到口或光标不动会分别给出排查指向。自检走独立 `QThread`(`KmboxSelfCheckWorker`)不卡界面,任务运行中禁用、自检期间禁用开始\n- 单测:`tests/test_kmbox_backend.py` 9 项绿;改默认值不触及任何测试(测试均用注入 transport,不走引擎默认后端)\n- 待办:标注台采 arrow 游戏光标模板 → 跑命中率回归"
+  "version": "0.3.50",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.50/JidoMH-0.3.50.zip",
+  "sha256": "5815f0e2b95f95162ede6f77eca6cffd19c3188af63af5c3f0ef0246a21f943f",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.50/files.json",
+  "notes": "- **新增「🎯 绝对定位探测」按钮:测 kmbox B 支不支持硬件绝对定位。** 背景:raw input 游戏里 OS 光标 ≠ 游戏光标且偏差不可算,通用解法是用 kmbox 自带的硬件坐标里程计(`zero` 校准 → `getpos` 读绝对坐标 → `moveto` 绝对定位)绕开 OS 光标;但便宜的 kmbox B 串口版不一定有这套指令,故先探测再定方案。按官方手册的 raw-input 流程依次发 `screen`(注册屏幕)→ `zero`(校准,光标应冲到屏幕左上角)→ `getpos`(读坐标)→ 两次 `moveto` 到屏幕正中(中间用相对 `move` 推开),每步回显实时打到日志。只移动 + 读回显、**不点击**,安全。判读:zero 冲角 + getpos 返回坐标 + 两次 moveto 落同一点 → 支持(走硬件绝对定位);全无反应 → 不支持(走视觉闭环)。注意 kmbox B 固件常静默无回显,以光标实际动作为准\n- **后端新增 `KmboxBackend.raw(cmd, read_reply=...)`:** 发任意整条指令并可选读回显(`getpos` 这类要返回值的用),命令格式与已验证可用的 `km.move(...)` 一致。探测走独立 `QThread`(`KmboxAbsProbeWorker`),与 kmbox 自检互斥,任务运行中禁用\n- 单测:`tests/test_kmbox_backend.py` 9 项绿;`raw` 收发路径单独验过(write-only + read 兜底)"
 }
