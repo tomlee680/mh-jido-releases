@@ -1,7 +1,7 @@
 {
-  "version": "0.3.56",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.56/JidoMH-0.3.56.zip",
-  "sha256": "0f9d5d4b87462c2626efceb90c746cdbb6c4731831d9effdee4bbd6e0dfdf860",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.56/files.json",
-  "notes": "- **新增 kmbox 中途「看门狗」:注入侧 HID 卡死立刻停并提示重插,不空跑一整晚。** 开跑前的活性检测只保证「那一刻手是活的」,挡不住跑到一半才卡(注入侧 HID 会间歇性冻结:串口写成功但设备纹丝不动,伪装成一堆「点不中」)。现在 `run` 循环每 `KMBOX_WATCHDOG_SECS`(25s)在**循环边界**(光标已漂到安全区)探一次:`controller.probe_backend_alive` 发一发**自复位的 ±40 相对增量**、用 `GetCursorPos` 前后比对——OS 光标真动了=手还活着;没动=判为卡死 → 打出重插话术并 `request_stop` 停机。探测自复位、几乎无扰动;只对 kmbox(无绝对定位)生效,支持绝对定位的后端 / 非 Windows 直接免探。与上一版「按键卡死」修复正交:那条防「软件把键留按住」,这条防「硬件中途冻结空跑」。"
+  "version": "0.3.57",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.57/JidoMH-0.3.57.zip",
+  "sha256": "ab85a632ddcd18f22bf37b3aa38db0beb1266a6e2790af4b162b044510bee58b",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.57/files.json",
+  "notes": "- **修复「游戏光标收敛=True 却点不中、画面不滚」的最终根因:运行端仍在拿模板框中心当光标尖端。** 现象:师傅名 `conf=1.00` 命中、`[游戏光标闭环] 收敛=True 残差=(-2,0)`,点了却全程画面不滚。真因**不是**参考系(raw input 游戏点击也吃游戏自绘光标,系统光标那 `(-28,-23)` 是红鲱鱼)、**不是**点击投递,而是 `find_game_cursor` 在没读到 `arrow.json` 时 `hx,hy = c[\"hotspot\"] or (tw//2, th//2)` **静默退回框中心**当尖端 → 伺服把「框中心」怼到师傅名(报收敛),而游戏用来命中的**真尖端**在框左上角十几二十像素外 → 点落在名字旁的空处。对得上肉眼看到的「箭头身子扫过名字、尖端偏一边」。\n  - **`_ensure_cursor` 把热点定死、不再默默退框中心。** 优先级:`arrow.json`(采集标定)→ **掩码几何自动推尖端**(新增 `_derive_cursor_hotspot`:取掩码前景中 `x+y` 最小的像素=指向左上的箭头尖端)→ 兜底框中心。这样即便发布包漏了 `arrow.json`,只要有掩码就能从 sprite 几何还原尖端,伺服控制的是真尖端而非框心。\n  - **开跑打一行 `[图1·热点] 箭头热点=(hx,hy) 尺寸=… 来源=…`。** 真机能直接核对用的是 `arrow.json` / 掩码推 / 兜底框中心,尖端偏了一眼可见。\n  - **不与「禁偏移补偿」冲突:** 标定光标 sprite 自身的尖端热点 ≠ 给 OS/注入漂移打静态补偿,是识别层本来就该做的建模。\n  - **待真机:** 看 `[图1·热点]` 那行确认来源;若显示「兜底框中心」说明掩码没采到,去标注台补采;点师傅后画面滚(`scene_diff≥13`)即命中。"
 }
