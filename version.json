@@ -1,7 +1,7 @@
 {
-  "version": "0.3.70",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.70/JidoMH-0.3.70.zip",
-  "sha256": "6db24ee3c5eddd3d1cc76661b70abdedf56663232dadc5ac4f6e2302f5622227",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.70/files.json",
-  "notes": "- **修正住店开场流程:Alt+F1 是「飞行符」瞬开世界地图,不是回城,去掉紧随其后那次多余的 Tab。** 之前把 Alt+F1 当成「回城传送」,于是按完等 1~2s「传送落地」再按 Tab 开世界地图——但 Alt+F1 本身已经把世界地图弹出来了,紧接着的 Tab 等于又切一下地图(把飞行符地图切掉/换成另一张),所以肉眼看到「Alt+F1 打开 → 马上被关 → 又开 Tab」,且切错界面后「长安」自然匹配不到(日志 `长安 best=0.47 命中=否`)。\n  - **改动(`decision/zhudian.py`):** 删掉 `open_worldmap`/`wait_worldmap` 两相位与「等传送」的 1~2s 空等。新流程 = 按 Alt+F1 瞬开世界地图 → 极短缓冲(0.15~0.3s,只防抓到切换中的帧)→ 直接找「长安」点击飞过去。重试文案从「回城重来」改「重开飞行符地图重来」。城内走坐标 navigator 自用的 Tab 不受影响。\n  - **界面统一(`gui.py`/`engine.py`):** 「回城快捷键」label 及相关注释改为「飞行符快捷键」;持久化设置键名(`zhudian/return_key` 等)保持不变,旧存档照常读回。\n  - **测试:** `test_zhudian.py` 开场用例改为验证「Alt+F1 后不再按 Tab、直接进 find_changan」,回归 6 全过。\n  - **仅住店任务受影响**,其余任务与硬件层不变。"
+  "version": "0.3.72",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.72/JidoMH-0.3.72.zip",
+  "sha256": "809a053613173340b4bf6b5b0fa749a86b16f8fffba22315948f9c431a6a6826",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.72/files.json",
+  "notes": "- **修住店进城后「看着卡死、迟迟不开 Tab」:把进城后的盲目定时等待改成「落地画面稳定即开 Tab」。** 之前 `travel_wait` 相位不看画面,死数满 `TRAVEL_TIMEOUT_TICKS=20` 轮(约 20~30s)才肯建 navigator 开 Tab 走酒楼坐标,期间只刷「等待进入长安城(第 N/20 轮)」——飞行符落地后角色其实早已站定不动,这 20 轮纯属白等,肉眼看就是「到了长安不会开 Tab」。\n  - **改动(`decision/zhudian.py::_do_travel_wait`):** 进城确认(点长安前后 `scene_diff` 变大=画面切换)后,改盯 `scene_diff`——落地切场的晃动/淡入过去、画面连续 `TRAVEL_SETTLE_CONFIRM=2` 帧低于 `TRAVEL_SETTLE_THRESH=8`(静止)即判「落地站稳」,立刻切 `nav_tavern` 开 Tab 走坐标;另留 `TRAVEL_TIMEOUT_TICKS=8` 的短安全上限兜底,万一读不到画面也不至于彻底卡死。判据从拍脑袋的计时换成画面本身,进城后一两秒内即开 Tab。\n  - **测试:** `test_zhudian.py` 回归 6 全过。\n  - **仅住店任务受影响**,其余任务与硬件层不变。"
 }
