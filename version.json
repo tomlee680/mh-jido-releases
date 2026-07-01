@@ -1,7 +1,7 @@
 {
-  "version": "0.3.63",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.63/JidoMH-0.3.63.zip",
-  "sha256": "026e37d4d5f4f2a866e6c1d7ba615eb000410d93286f389823112cb9101fb82d",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.63/files.json",
-  "notes": "- **标注台两处根因修复:采集完 OpenCV 窗关不掉、提交预置库总失败。**\n  - **① 采集完那张图(「click cursor TIP」窗)关不掉——搬进独立子进程根治。** 根因:OpenCV(HighGUI)窗寄生在 Qt 标注台主进程里,`destroyAllWindows()` 只投递销毁请求、要靠事件循环继续 pump `waitKey` 才真拆窗;而最后一个窗(点尖端那步)之后控制权就回 Qt、没人再 pump → 永远是最后那个窗漏成僵尸窗。解法:新增 `labeling/capture_worker.py`,采集全程在独立子进程跑(`capture.run_in_subprocess` 拉起 `python -m labeling.capture_worker`,结果以 `__CAPTURE_RESULT__ {json}` 回传);子进程一退出,操作系统连带回收它创建的所有窗口——从结构上杜绝僵尸窗,Qt 主进程再也不碰 HighGUI。console 三处采集调用改走子进程。\n  - **② 「提交并推送预置库」总报连不上 github,但 app 能自动更新——查明非通路坏、是两条不同的路,改走 HTTPS API 根治。** 自动更新用 urllib 走 HTTPS 到 `raw.githubusercontent.com`(Fastly CDN)能通,而旧的 `git push` 走 git 自己的传输、到 `github.com`、用 git 自己的代理配置——主机和网络栈都不同,一个通一个不通很正常,不是「通路坏了」。解法:重写 `labeling/gitops.py`,`commit_and_push` 改走 GitHub **Git Data API**(与发布/更新同一套已验证可用的 urllib+PAT):一次原子提交把 `game_config/templates` 整目录同步到源仓 main(建 blob→建 tree(含删除项)→建 commit→快进 ref)。令牌取环境变量 `GITHUB_TOKEN` 或仓库根的 `.release_token`(需授权 `tomlee680/mh-jido` 的 Contents 读写)。\n  - **仅开发标注台受影响**(labeling 包不进正式包),普通用户功能无变化。离线单测覆盖:删除检测/前缀过滤/中文路径/无改动短路/缺令牌提示,全过。"
+  "version": "0.3.64",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.64/JidoMH-0.3.64.zip",
+  "sha256": "3673c40dd01cee5302a3d737ae21227cfea7017500957518da29b0b6df2a26c9",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.64/files.json",
+  "notes": "- **师门任务:点中师傅后自动关掉人物工具面板(新增 `close_panel` 相位)。** 点东海龙王触发自动寻路后,原来面板一直开着;现在流程为 点师傅 → `verify_click` 用 scene_diff 确认人物开始走 → **`close_panel`(等 100~400ms 波动停顿 `CLOSE_PANEL_WAIT` 再按 Alt+Q 关面板)** → `navigating` 等「师门任务」对话。关面板刻意放在「确认点中之后」:关面板本身会改画面,若在确认前关会污染 scene_diff 的点中判定;Alt+Q 与开面板同一开关键,此时面板开着按一次即关,也让对话检测不被面板遮挡。仅决策层 `decision/shimen.py` 改动,回归测试新增两条(确认点中转 close_panel、close_panel 按 Alt+Q 转 navigating),全套 59 全过。"
 }
