@@ -1,7 +1,7 @@
 {
-  "version": "0.3.64",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.64/JidoMH-0.3.64.zip",
-  "sha256": "3673c40dd01cee5302a3d737ae21227cfea7017500957518da29b0b6df2a26c9",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.64/files.json",
-  "notes": "- **师门任务:点中师傅后自动关掉人物工具面板(新增 `close_panel` 相位)。** 点东海龙王触发自动寻路后,原来面板一直开着;现在流程为 点师傅 → `verify_click` 用 scene_diff 确认人物开始走 → **`close_panel`(等 100~400ms 波动停顿 `CLOSE_PANEL_WAIT` 再按 Alt+Q 关面板)** → `navigating` 等「师门任务」对话。关面板刻意放在「确认点中之后」:关面板本身会改画面,若在确认前关会污染 scene_diff 的点中判定;Alt+Q 与开面板同一开关键,此时面板开着按一次即关,也让对话检测不被面板遮挡。仅决策层 `decision/shimen.py` 改动,回归测试新增两条(确认点中转 close_panel、close_panel 按 Alt+Q 转 navigating),全套 59 全过。"
+  "version": "0.3.65",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.65/JidoMH-0.3.65.zip",
+  "sha256": "38bbde5cde9f8ecaf5ee6ecade690608720c6cf0849c2111520666fcaf28640a",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.65/files.json",
+  "notes": "- **新增通用「走到当前地图坐标 (x,y)」能力 + 住店任务(初版,待真机采模板与调参)。** 住店/抓鬼这类「按坐标走位」的任务共用一套独立能力,以后加任务直接拿来用。\n  - **通用走坐标(与硬件无关的核心,含单测):** `decision/mapcalib.py` 坐标↔像素线性标定(按 x/y 两轴最小二乘,≥2 样本)、`decision/navigate.py` `CoordinateNavigator` 导航状态机(开 Tab → 探两点读游戏自带坐标读数**现场自标定** → 算目标像素 → 悬停核对不准就补样本重标定自纠 → 点它触发寻路 → scene_diff 飙高确认在走)。**不用给每张地图预采锚点**:游戏在光标处会显示坐标读数,程序把它当真值现场标定,换图重来即可(抓鬼各图坐标不同也通用)。\n  - **坐标读数识别(`perception/coordread.py`):** 读数框「465,174」用 0~9 **数字模板匹配**读出 (x,y) 写进 `UIState.coord_readout`;读数是**黄色**数字压半透明盒→改**黄色二值化再匹配**,背景怎么变都不影响;读数框**跟着光标走、在尖端正上方**→ 感知先 `find_game_cursor` 找尖端再在其上方读,**不用采读数框位置**。0~9 数字模板已入库(`game_config/templates/coord/`)。\n  - **探点移动(`execution/controller.py`):** MOVE 带 `cursor_servo` 时把游戏光标伺服到目标像素后**停住不点**(悬停读坐标用);绝不 `drift_to_rest`(漂走就读不到该点坐标)。kmbox 无绝对定位,定位仍走视觉伺服。\n  - **住店状态机(`decision/zhudian.py`):** Alt+F1 回城 → Tab 开世界图 → 点「长安」→ 用上面能力走到酒楼坐标(≈468,169)→ 点「酒楼老板」→ 点「我要休息」。点击闭环沿用师门(scene_diff 判在走 / 目标消失判生效)。\n  - **框架接线:** `engine` 按 `cfg.task` 工厂分派 `ShimenBrain`/`ZhudianBrain`;`perception` 加 `scan_coord`(读坐标)/`scan_zhudian`(匹配长安/酒楼老板/我要休息三模板)相位。**GUI 三任务并列(师门/住店/抓鬼),默认都不勾、不互斥**(方便以后「抓 n 鬼→住店」交替);勾住店点开始会校验模板是否齐,缺则提示采哪张。\n  - **待真机:** 采三张模板(长安/酒楼老板/我要休息,标注台已自动出采集按钮);首跑按日志微调读数框偏移 `COORD_BOX_*`、城内探测点 `DEFAULT_PROBE_PIXELS`、进城等待时长。\n  - **回归测试:** 新增 mapcalib/navigate/coordread/coord 模板/zhudian 等共 31 条,全套 **90 全过**。"
 }
