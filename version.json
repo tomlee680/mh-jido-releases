@@ -1,7 +1,7 @@
 {
-  "version": "0.3.54",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.54/JidoMH-0.3.54.zip",
-  "sha256": "16c54e7fb82a077238b7fe93c0805e449308b3d540ea04d30db07ec65a970d72",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.54/files.json",
-  "notes": "- **修复采集后残留一个关不掉的「僵尸」OpenCV 窗口(采集后那张图样)。** 标注台是 Qt 进程,在它里面开 HighGUI 窗口(`selectROI` / 掩码预览 / 点尖端 / 倒计时)时,`cv2.destroyAllWindows()` 只发销毁请求、不驱动窗口管理器事件队列 → 窗口残留成关不掉的僵尸窗。新增 `_close_windows()`:destroy 后再 pump 5 次 `cv2.waitKey(1)` 把事件走完,窗口才真正消失;采集流程里所有关窗(共 5 处)统一走它,不再直接 `destroyAllWindows()`。"
+  "version": "0.3.55",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.55/JidoMH-0.3.55.zip",
+  "sha256": "277bcf6debbc7c4446073828cbb8e21fc204e3a970d7f6ac288497b632e88c74",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.55/files.json",
+  "notes": "- **修复 kmbox 中途「整个失效、只能重插」的根因:左键被留在按住状态。** 现象:光标移动到目标 → 点后漂开 → 之后完全动弹不得。真因:`_tap` 里 `left_down → sleep → left_up`,若 down 与 up 之间抛异常/被打断,`left_up`(`km.left(0)`)就发不出去,左键在 **HID 层物理保持按下**;而 `KmboxBackend.close()` 只关串口、不补释放 → 串口一关就再没法松开 → 表现为 kmbox 彻底失效,唯有重插(重置 HID 状态)才恢复。两道防御:\n  - **`_tap` 用 try/finally 保证抬键。** 一旦 `left_down`,无论中途发生什么,`left_up` 必被调用 —— 绝不把左键留在按下。(不新增按下点,`test_click_invariants` 守护的「唯一 left_down 且在 _tap 内」不变。)\n  - **`KmboxBackend.close()` 关口前防御性释放。** 依次发 `km.left(0)/right(0)/middle(0)` 再关串口,逐条吞异常;正常停止、异常中断、进程退出都不会把键留在按住。\n- **说明:** 这只堵「按键卡死」这条软件线。若是 memory 记的「注入侧 HID 间歇性硬件卡死(发命令但光标纹丝不动)」,软件发不出去、松不开,仍需重插——那条得靠开跑前活性检测 + 后续加中途 watchdog 兜底,与本次修复正交。"
 }
