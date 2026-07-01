@@ -1,7 +1,7 @@
 {
-  "version": "0.3.66",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.66/JidoMH-0.3.66.zip",
-  "sha256": "bf22283be1701552f702935e75da22f0a3dc5c957e6b5e233b741f83bf92b5bb",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.66/files.json",
-  "notes": "- **师门任务下线,界面与标注台按任务重构;点击核心与进场核心原样保留。** 师门不再是优先级,它的价值是摸索出了两块**任务无关的公共核心**——两者一行未动、每个任务共用:①**进场**(`engine.prime_focus`/`prime_into_window`,任务开始前把鼠标滑进游戏窗口唤出游戏光标);②**视觉闭环点击**(滑动伺服 + 等光标变「手」再点,`execution/controller`+`servo`、`perception/state` 的 `find_game_cursor`/`find_game_hand`、`engine` 的光标/手型探针)。删师门后回归测试 **75 全过**,证实这两块不受影响。\n  - **物理删师门:** `decision/shimen.py`、`templates.py` 的 `master` 类别 + `dialog/shimen_task` 槽、`state.py` 的师傅名/对话扫描(`scan_master`/`scan_dialog`/`_ensure_templates`/`_ensure_dialog_template` 及相关阈值常量)、`tests/test_shimen_*`。`engine` 决策器工厂只剩住店分支(其余任务 `raise`);`EngineConfig` 默认 `task=zhudian`、去掉 `return_key`/`master_name`;`main.py` 默认 `--task zhudian`。\n  - **界面重构(`gui.py`):** 任务改**单选卡片、一次跑一个**,顺序 **抓鬼(1)/住店(2,唯一可跑)/医疗宝宝(3,新占位)**;抓鬼、医疗宝宝置灰标「待接逻辑」。**开始**升为主色大按钮;**kmbox 自检、标注台、检查更新**收进底栏——主操作与硬件诊断分开。删掉没用的「绝对定位探测」。每个可跑任务各自的完成数量(住店的在卡内,记忆回填)。\n  - **标注台按任务分(`labeling/console.py`):** 顶部下拉切任务(住店/抓鬼/医疗宝宝),只显示该任务槽位 + 「全局共用」的坐标读数(0~9 数字 + 读数框 ROI)与游戏光标(箭头/手型)。抓鬼/医疗宝宝类别未定义 → 显示「槽位待定义」。`capture_worker` 新增 `global`(任意类别全局槽)与 `coord_roi`(写 `coord/roi.json`)采集模式、删师门专用的 `dialog` 模式;`capture.py` 加 `capture_coord_roi`。标注台按钮常驻底栏(正式包仍排除 labeling 包,用户不可见)。"
+  "version": "0.3.67",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.67/JidoMH-0.3.67.zip",
+  "sha256": "e6b288459b8f213740b0cff41a583fc93a639790152a2814e59e8a8661ba23b5",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.67/files.json",
+  "notes": "- **修复打包版(.exe)标注台采集全部失效:点采集不弹框选窗、日志报「采集子进程没有返回结果(退出码 0)」。** 根因是 0.3.63「采集搬进子进程」在打包态下的回归:`capture.run_in_subprocess` 用 `sys.executable -m labeling.capture_worker` 起子进程,这假设 `sys.executable` 是 python 解释器——源码运行成立,但打包后 `sys.executable` 是 app 自己的 exe,PyInstaller 的 exe **不认 `-m`**,会忽略它、把 `gui.py` 主入口再跑一遍 → 撞单实例守卫 `_signal_existing_instance()` → 把原窗口拉到最前后立即 `return` 退出(退出码 0、无 stdout)→ 父进程找不到 `__CAPTURE_RESULT__`,真正的 `capture_worker` 从没跑起来,截图窗自然不弹。\n  - **解法(保持「独立进程、OS 退出即回收 cv2 窗」的原设计):** 打包态改用「同一个 exe + `--capture-worker` 哨兵」重启自己;`gui.main()` 在 `QApplication`/单实例守卫**之前**认这个哨兵,直接转交 `labeling.capture_worker.main()` 并退出——纯采集进程,不建 Qt、不撞单实例守卫。源码运行仍走 `-m` 原路径,行为不变。\n  - **仅开发标注台受影响**(labeling 包不进正式用户包),普通用户功能无变化。"
 }
