@@ -1,7 +1,7 @@
 {
-  "version": "0.3.55",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.55/JidoMH-0.3.55.zip",
-  "sha256": "277bcf6debbc7c4446073828cbb8e21fc204e3a970d7f6ac288497b632e88c74",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.55/files.json",
-  "notes": "- **修复 kmbox 中途「整个失效、只能重插」的根因:左键被留在按住状态。** 现象:光标移动到目标 → 点后漂开 → 之后完全动弹不得。真因:`_tap` 里 `left_down → sleep → left_up`,若 down 与 up 之间抛异常/被打断,`left_up`(`km.left(0)`)就发不出去,左键在 **HID 层物理保持按下**;而 `KmboxBackend.close()` 只关串口、不补释放 → 串口一关就再没法松开 → 表现为 kmbox 彻底失效,唯有重插(重置 HID 状态)才恢复。两道防御:\n  - **`_tap` 用 try/finally 保证抬键。** 一旦 `left_down`,无论中途发生什么,`left_up` 必被调用 —— 绝不把左键留在按下。(不新增按下点,`test_click_invariants` 守护的「唯一 left_down 且在 _tap 内」不变。)\n  - **`KmboxBackend.close()` 关口前防御性释放。** 依次发 `km.left(0)/right(0)/middle(0)` 再关串口,逐条吞异常;正常停止、异常中断、进程退出都不会把键留在按住。\n- **说明:** 这只堵「按键卡死」这条软件线。若是 memory 记的「注入侧 HID 间歇性硬件卡死(发命令但光标纹丝不动)」,软件发不出去、松不开,仍需重插——那条得靠开跑前活性检测 + 后续加中途 watchdog 兜底,与本次修复正交。"
+  "version": "0.3.56",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.56/JidoMH-0.3.56.zip",
+  "sha256": "0f9d5d4b87462c2626efceb90c746cdbb6c4731831d9effdee4bbd6e0dfdf860",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.56/files.json",
+  "notes": "- **新增 kmbox 中途「看门狗」:注入侧 HID 卡死立刻停并提示重插,不空跑一整晚。** 开跑前的活性检测只保证「那一刻手是活的」,挡不住跑到一半才卡(注入侧 HID 会间歇性冻结:串口写成功但设备纹丝不动,伪装成一堆「点不中」)。现在 `run` 循环每 `KMBOX_WATCHDOG_SECS`(25s)在**循环边界**(光标已漂到安全区)探一次:`controller.probe_backend_alive` 发一发**自复位的 ±40 相对增量**、用 `GetCursorPos` 前后比对——OS 光标真动了=手还活着;没动=判为卡死 → 打出重插话术并 `request_stop` 停机。探测自复位、几乎无扰动;只对 kmbox(无绝对定位)生效,支持绝对定位的后端 / 非 Windows 直接免探。与上一版「按键卡死」修复正交:那条防「软件把键留按住」,这条防「硬件中途冻结空跑」。"
 }
