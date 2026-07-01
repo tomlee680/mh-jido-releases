@@ -1,7 +1,7 @@
 {
-  "version": "0.3.60",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.60/JidoMH-0.3.60.zip",
-  "sha256": "6bd8670bb59117718ac2d2b6ccac65af6deaad9a2a7eb5913f9ad436a9bf457f",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.60/files.json",
-  "notes": "- **修复「点开始后光标不会自己滑进游戏窗口」——进场判据从系统光标换成游戏光标。** 根因:`prime_into_window` 旧实现拿 `GetCursorPos`(系统光标)当「进没进」的反馈,而梦幻一拿到焦点、系统光标就冻结/与游戏光标分叉 → kmbox 明明在物理推鼠标、`GetCursorPos` 却纹丝不动 → 循环 `moved_any` 恒 False、第 4 步早退,光标没被送进窗口(kmbox 本身没卡:手动把鼠标挪进窗口就能动)。新进场流程不再问系统光标:\n  - **① `SetCursorPos` 把系统光标跳到窗口中心**(绝对定位只用于进场、不用于瞄准,漂移无所谓);\n  - **② kmbox 发几下净位移≈0 的小抖动**,在客户区里制造真实 raw-input 移动事件,复刻「手动把鼠标挪进窗口」那一下,唤出游戏自绘光标;\n  - **③ 用 `cursor_probe`(find_game_cursor)确认游戏光标真的出现**才算进场成功——用眼睛(游戏光标)做闭环,不再信会冻结的系统光标。没出现就再来一轮(最多 4 轮)。\n  - **兜底:** 非 Windows(无 SetCursorPos)退回「kmbox 相对 + GetCursorPos 尽力推进」旧路,早退阈值放宽到 6 步。\n  - 与整套架构一致:眼睛=截屏游戏光标、手=kmbox 相对;进场这一步过去恰恰漏用了眼睛、错信了系统光标。"
+  "version": "0.3.61",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.61/JidoMH-0.3.61.zip",
+  "sha256": "ac272caf8a277cb22da9a7797183b7c71e97ac7d2beb8ef7fbafec204381ced9",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.61/files.json",
+  "notes": "- **修复「点开始后光标肉眼从没进游戏窗口、在窗外晃悠、点不中师傅」——0.3.60「进场判据换成游戏光标」反噬,查出新的真因并根治。** 日志显示 `[进场] …(already)` 说进场成功,但肉眼光标从没进窗。根因:`prime_into_window` 开头用 `game_cursor_seen()`(=`cursor_probe` 模板匹配)判「已进场」,却被**窗口内一处静止 UI 的箭头形特征误匹配(conf 0.92)** 骗到 → 直接 `return \"already\"` 早退 → 底下的 `SetCursorPos` 一次都没跑 → OS 光标从没被送进窗口。这个 0.92 假匹配还顺带毒化两处:`_glide` 起点(盲搜整帧 → 相对增量起点算错 → 把窗外真光标越推越远)和伺服反馈(追静止假点 → 残差恒 ~25、点不中）。教训:**进没进是 OS 层事实,只能用 OS 光标位置判,不能用会被静止 UI 骗的模板匹配。** 两层根治:\n  - **A 进场决定论化(`prime_into_window` 重写):** 判据换回 `GetCursorPos` 是否在客户区矩形内——只用于**进场决策**(此刻光标在窗外、游戏尚未接管指针,`GetCursorPos` 可信;0.3.60 说的「焦点态冻结」只在拿它做**持续瞄准反馈**时才犯,进场一次性判定不犯)。**不管模板一律至少 `SetCursorPos` 物理进场一次**,jiggle 后用 `GetCursorPos` 确认;读不到也按「已放中心」处理。彻底删掉 `game_cursor_seen()` 早退。\n  - **B 帧差分运动门 + `_est` 播种:** `find_game_cursor(require_motion=)` 用「本帧 vs 上帧帧差」把没动的候选从相关图抹掉——真光标每轮被 kmbox 推动必移位、窗口内静止 UI 不动,于是那个 conf 0.92 的静止假匹配被删,伺服不再追幽灵(残差恒 ~25 的根)。`_glide` 起点和伺服 iter0 改用 `_est`(进场已设窗口中心)附近 **ROI 搜,绝不盲搜整帧**（`CURSOR_MOTION_THRESH=18`/`CURSOR_MOTION_MIN_PX=6`，仅在确有足够运动像素时才启用门，不误伤静止的真光标）。\n  - **回归测试:** `test_motion_gate_rejects_static_false_match`（静止假箭头被运动门棄却、动了的真光标被拾到）；全套单测 52 全过。"
 }
