@@ -1,7 +1,7 @@
 {
-  "version": "0.3.72",
-  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.72/JidoMH-0.3.72.zip",
-  "sha256": "809a053613173340b4bf6b5b0fa749a86b16f8fffba22315948f9c431a6a6826",
-  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.72/files.json",
-  "notes": "- **修住店进城后「看着卡死、迟迟不开 Tab」:把进城后的盲目定时等待改成「落地画面稳定即开 Tab」。** 之前 `travel_wait` 相位不看画面,死数满 `TRAVEL_TIMEOUT_TICKS=20` 轮(约 20~30s)才肯建 navigator 开 Tab 走酒楼坐标,期间只刷「等待进入长安城(第 N/20 轮)」——飞行符落地后角色其实早已站定不动,这 20 轮纯属白等,肉眼看就是「到了长安不会开 Tab」。\n  - **改动(`decision/zhudian.py::_do_travel_wait`):** 进城确认(点长安前后 `scene_diff` 变大=画面切换)后,改盯 `scene_diff`——落地切场的晃动/淡入过去、画面连续 `TRAVEL_SETTLE_CONFIRM=2` 帧低于 `TRAVEL_SETTLE_THRESH=8`(静止)即判「落地站稳」,立刻切 `nav_tavern` 开 Tab 走坐标;另留 `TRAVEL_TIMEOUT_TICKS=8` 的短安全上限兜底,万一读不到画面也不至于彻底卡死。判据从拍脑袋的计时换成画面本身,进城后一两秒内即开 Tab。\n  - **测试:** `test_zhudian.py` 回归 6 全过。\n  - **仅住店任务受影响**,其余任务与硬件层不变。"
+  "version": "0.3.73",
+  "url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.73/JidoMH-0.3.73.zip",
+  "sha256": "5ea8e069d21c29efbfcb5ee079ec49330394503dde56c944a064b66311345e11",
+  "files_url": "https://github.com/tomlee680/mh-jido-releases/releases/download/v0.3.73/files.json",
+  "notes": "- **重构坐标读数识别,根治「读成 16 位怪数→按垃圾标定误点」;不引入外部依赖。** 真机日志把坐标 `465,174` 读成 `7777711…` 十几位,再拿垃圾标定点到 `(353,375)` 空地。两层根因:①旧 `coordread` 用**整片 `matchTemplate` 多尺度+NMS**、且 0~9 数字图从没采到 → 一片噪声拼成十几位;②**没有任何护栏**:`mapcalib` 每轴 2 样本拟合 2 未知数,残差数学上恒≈0(日志「残差0.0px」是假象),自纠每次仍垃圾、用尽后「尽力点」误点。\n  - **改识别为「切分+逐字分类」(`perception/coordread.py`)**:黄掩码 → 连通域切字(逗号更矮被高度门滤掉)→ 每字尺寸归一 → 跟 0~9 参照做归一化相关(`TM_CCOEFF_NORMED`)最近邻分类。查了业内:原装 OCR 读游戏小字不可靠,固定字体主流就是切分+逐字分类。\n  - **合理性护栏(`read_coord`)**:切块数须 2~6、左右各 1~3 位、每位分类分 ≥0.5;任一不合 → 返回 `None`。垃圾读数**留在感知层**,导航层读到 `None` 走超时判失败**大声报错,不再拿垃圾去点**。\n  - **删除读数框 ROI 死代码**:`roi.json`/`load_coord_roi`/`coord_roi_rel`/`capture_coord_roi`/标注台 ROI 按钮/采集子进程 `coord_roi` 模式全删;读数框只走光标相对框 `COORD_BOX_*`。0~9 数字采集槽保留(逐字分类的参照)。\n- **新增独立「走到坐标」任务(测试用),把 `CoordinateNavigator` 单拎出来反复调。** `decision/goto.py::GotoBrain` 薄包装(与 ZhudianBrain 同接口),GUI 加第 ④ 张任务卡「走到坐标」:填 X/Y → 开 Tab 走过去。**单次运行**(跑一遍即停,要再测再点开始),便于在真机反复调这条链;跑通即证明该链任意图可复用。\n  - **成功判据=点准 (x±5, y±5)**:给 `CoordinateNavigator` 加构造参数 `coord_tol`(默认±3住店沿用,goto 传±5)与 `require_verified`(严格模式:只有悬停核对确实落进 ±tol 才点才算成功,读不到坐标/自纠用尽→判失败不「尽力点」蒙混;goto=True、住店=False保原行为)。\n  - **测试:** `test_coordread`/`test_coord_templates`/`test_navigate`/`test_goto` 等回归 **86 全过、2 跳过**(跳过=真机 0~9 模板未采时自动 skip)。真机仍需采齐 0~9 数字字形 + 光标 arrow。"
 }
